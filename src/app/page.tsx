@@ -1,65 +1,108 @@
-import Image from "next/image";
+"use client"
+
+import * as React from "react"
+import { FilterBar } from "@/components/FilterBar"
+import { HolidayCalendar } from "@/components/HolidayCalendar"
+import { HolidayList } from "@/components/HolidayList"
+import { ThemeToggle } from "@/components/ThemeToggle"
+import { holidays2026 } from "@/data/holidays"
+import { Country } from "@/types"
 
 export default function Home() {
+  const [countryFilter, setCountryFilter] = React.useState<Country>('BOTH')
+  const [view, setView] = React.useState<'CALENDAR' | 'LIST'>('CALENDAR')
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+    <div className="min-h-screen bg-background transition-colors duration-300">
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col items-start text-left mb-12 space-y-6">
+            <span className="px-4 py-1.5 rounded-full border border-border text-muted-foreground text-sm font-medium">
+              2026
+            </span>
+            <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1]">
+              Festat Zyrtare në
+              <br />
+              <span className="relative inline-block text-red-600 dark:text-red-400 mr-2 after:absolute after:bg-current after:bottom-1 after:left-0 after:h-[3px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300 cursor-default">
+                Shqipëri
+              </span>
+              dhe
+              <span className="relative inline-block text-blue-600 dark:text-blue-400 ml-2 after:absolute after:bg-current after:bottom-1 after:left-0 after:h-[3px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300 cursor-default">
+                Kosovë
+              </span>
+            </h1>
+            
+            <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted-foreground pt-2">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                Shqipëri
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                Kosovë
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex gap-0.5">
+                  <span className="w-2.5 h-2.5 rounded-l-full bg-red-500"></span>
+                  <span className="w-2.5 h-2.5 rounded-r-full bg-blue-500"></span>
+                </div>
+                Të dyja
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30"></span>
+                Fundjavë
+              </div>
+            </div>
+          </div>
+
+          <FilterBar
+            countryFilter={countryFilter}
+            view={view}
+            onCountryChange={setCountryFilter}
+            onViewChange={setView}
+          />
+
+          <div className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {view === 'CALENDAR' ? (
+              <HolidayCalendar holidays={holidays2026} countryFilter={countryFilter} />
+            ) : (
+              <HolidayList holidays={holidays2026} countryFilter={countryFilter} />
+            )}
+          </div>
+          <div className="mt-12 p-4 rounded-lg bg-muted/50 border border-border">
+            <p className="text-sm sm:text-base font-medium text-foreground/80 text-center italic">
+              Shënim: Data e festave të Kurban Bajramit dhe Bajramit të Madh mund të ndryshojë sipas kalendarit hënor. 
+              Në rast se do të ketë ndryshime, do të viheni në dijeni me një njoftim të dytë.
+            </p>
+          </div>
         </div>
       </main>
+
+      <footer className="border-t border-border mt-12 py-8 text-center text-sm text-muted-foreground">
+        <div className="flex flex-col items-center gap-4">
+          <p>© 2026 Festat Zyrtare. Të gjitha të drejtat e rezervuara.</p>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs">
+            <a 
+              href="https://www.bankofalbania.org/Shtypi/Kalendari_i_festave_zyrtare_2026/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors flex items-center gap-1"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+              Burimi për Shqipëri
+            </a>
+            <a 
+              href="https://mpb.rks-gov.net/f/86/Kalendari-i-Festave-Zyrtare-" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors flex items-center gap-1"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+              Burimi për Kosovë
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
-  );
+  )
 }
