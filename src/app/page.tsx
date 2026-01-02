@@ -52,6 +52,10 @@ export default function Home() {
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30"></span>
                 Fundjavë
               </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 dark:bg-yellow-600"></span>
+                Rekomandim për pushim
+              </div>
             </div>
           </div>
 
@@ -101,6 +105,9 @@ export default function Home() {
               Burimi për Kosovë
             </a>
           </div>
+          <p className="text-xs text-muted-foreground/60">
+            Përditësuar më: 02.01.2026
+          </p>
         </div>
       </footer>
     </div>

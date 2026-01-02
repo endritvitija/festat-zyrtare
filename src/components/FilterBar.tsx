@@ -26,7 +26,7 @@ export function FilterBar({
         <button
           onClick={() => onCountryChange('BOTH')}
           className={cn(
-            "px-4 py-2 rounded-md text-sm font-medium transition-all",
+            "px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer",
             countryFilter === 'BOTH'
               ? "bg-background shadow-sm text-foreground"
               : "text-muted-foreground hover:text-foreground"
@@ -37,7 +37,7 @@ export function FilterBar({
         <button
           onClick={() => onCountryChange('AL')}
           className={cn(
-            "px-4 py-2 rounded-md text-sm font-medium transition-all",
+            "px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer",
             countryFilter === 'AL'
               ? "bg-background shadow-sm text-foreground"
               : "text-muted-foreground hover:text-foreground"
@@ -48,7 +48,7 @@ export function FilterBar({
         <button
           onClick={() => onCountryChange('XK')}
           className={cn(
-            "px-4 py-2 rounded-md text-sm font-medium transition-all",
+            "px-4 py-2 rounded-md text-sm font-medium transition-all cursor-pointer",
             countryFilter === 'XK'
               ? "bg-background shadow-sm text-foreground"
               : "text-muted-foreground hover:text-foreground"
@@ -63,7 +63,7 @@ export function FilterBar({
           <button
             onClick={() => onViewChange('CALENDAR')}
             className={cn(
-              "p-2 rounded-md transition-all",
+              "p-2 rounded-md transition-all cursor-pointer",
               view === 'CALENDAR'
                 ? "bg-background shadow-sm text-foreground"
                 : "text-muted-foreground hover:text-foreground"
@@ -75,7 +75,7 @@ export function FilterBar({
           <button
             onClick={() => onViewChange('LIST')}
             className={cn(
-              "p-2 rounded-md transition-all",
+              "p-2 rounded-md transition-all cursor-pointer",
               view === 'LIST'
                 ? "bg-background shadow-sm text-foreground"
                 : "text-muted-foreground hover:text-foreground"

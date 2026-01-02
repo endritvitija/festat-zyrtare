@@ -21,7 +21,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
   const groupedHolidays = React.useMemo(() => {
     const groups: Record<string, Holiday[]> = {}
     filteredHolidays.forEach(holiday => {
-      const month = format(parseISO(holiday.date), 'MMMM yyyy', { locale: sq })
+      const month = format(parseISO(holiday.date), 'MMMM', { locale: sq })
       if (!groups[month]) {
         groups[month] = []
       }
@@ -31,7 +31,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
   }, [filteredHolidays])
 
   return (
-    <div className="space-y-12 max-w-3xl mx-auto">
+    <div className="space-y-12 max-w-1xl mx-auto">
       {Object.entries(groupedHolidays).map(([month, monthHolidays]) => (
         <div key={month}>
           <h3 className="text-xl font-bold capitalize text-foreground mb-4 px-2">
@@ -46,7 +46,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
                 <div 
                   key={holiday.date + holiday.name} 
                   className={cn(
-                    "flex items-center justify-between p-3 rounded-lg transition-colors hover:bg-muted/90",
+                    "flex items-center justify-between p-3  transition-colors border-b border-border",
                     isWknd && "opacity-90"
                   )}
                 >
