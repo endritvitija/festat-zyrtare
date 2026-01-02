@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({ 
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "Festat Zyrtare - Shqipëri & Kosovë",
@@ -17,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="sq" suppressHydrationWarning>
-      <body className={`${inter.className} antialiased min-h-screen bg-background text-foreground`}>
+      <body className={`${poppins.variable} font-sans antialiased min-h-screen bg-background text-foreground`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -110,6 +110,12 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                         <span className="text-[10px] leading-tight font-medium text-muted-foreground line-clamp-2 hidden sm:block">
                           {holiday.name}
                         </span>
+                        
+                        {/* Tooltip on hover */}
+                        <div className="absolute bottom-[calc(100%+5px)] left-1/2 -translate-x-1/2 w-max max-w-[180px] bg-popover text-popover-foreground text-xs font-medium p-2 rounded-md shadow-md border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center pointer-events-none">
+                          {holiday.name}
+                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-popover ml-[-1px] mt-[-1px]"></div>
+                        </div>
                       </div>
                     )}
                   </div>
