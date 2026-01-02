@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Festat Zyrtare - Shqipëri & Kosovë 🇦🇱 🇽🇰
 
-## Getting Started
+A modern, responsive web application that displays the official holidays for Albania and Kosovo for the year 2026. Built with Next.js and Tailwind CSS.
 
-First, run the development server:
+## 🚀 Features
+
+- **Dual View Modes**:
+  - **Calendar View**: A vertical, full-year scrolling calendar with clear holiday indicators.
+  - **List View**: A clean, chronological list of holidays grouped by month.
+- **Smart Filtering**: Filter holidays by country (Albania, Kosovo, or Both).
+- **Modern UI/UX**:
+  - Clean, minimalist design.
+  - Dark mode support 🌙.
+  - Smooth scrolling and animations.
+  - Sticky filter bar for easy navigation.
+  - Current day highlighting.
+- **Responsive**: Fully optimized for mobile, tablet, and desktop devices.
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 15](https://nextjs.org/) (App Router)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Date Handling**: [date-fns](https://date-fns.org/)
+- **Theming**: [next-themes](https://github.com/pacocoursey/next-themes)
+
+## 📂 Project Structure
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+src/
+├── app/                    # Next.js App Router
+│   ├── globals.css         # Global styles & Tailwind configuration
+│   ├── layout.tsx          # Root layout with ThemeProvider
+│   └── page.tsx            # Main application page
+├── components/             # React Components
+│   ├── FilterBar.tsx       # Sticky filter & view switcher
+│   ├── HolidayCalendar.tsx # Vertical calendar implementation
+│   ├── HolidayList.tsx     # List view implementation
+│   ├── ThemeToggle.tsx     # Dark/Light mode switch
+│   └── providers/          # Context providers (ThemeProvider)
+├── data/
+│   └── holidays.ts         # Static holiday data for 2026
+├── lib/
+│   └── utils.ts            # Utility functions (cn class merger)
+└── types/
+    └── index.ts            # TypeScript interfaces (Holiday, Country)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🏃‍♂️ Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/endritvitija/festat-zyrtare.git
+    cd festat-zyrtare
+    ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
 
-## Learn More
+3.  **Run the development server**:
+    ```bash
+    npm run dev
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+4.  Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📝 License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is open source and available under the [MIT License](LICENSE).
