@@ -99,11 +99,11 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
 
         return (
           <div key={month.toString()} className="w-full">
-            <h3 className="text-xl font-bold capitalize mb-4 text-foreground border-b border-border pb-2">
+            <h3 className="text-xl font-bold capitalize text-foreground border-b-2 border-border/50 py-4 px-4 sticky top-[72px] z-30 bg-background/95 backdrop-blur-sm">
               {format(month, 'MMMM', { locale: sq })}
             </h3>
 
-            <div className="grid grid-cols-7 text-sm mb-2">
+            <div className="grid grid-cols-7 text-sm  sticky top-[136px] z-30 bg-background/95 backdrop-blur-sm py-2 px-4 border-b border-border/40">
               {['Hën', 'Mar', 'Mër', 'Enj', 'Pre', 'Sht', 'Die'].map(day => (
                 <div 
                   key={day} 
@@ -117,7 +117,7 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
               ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden border-border/50 mx-4 sm:mx-0">
               {days.map((day) => {
                 const holiday = getHolidayForDate(day)
                 const isCurrentMonth = isSameMonth(day, month)

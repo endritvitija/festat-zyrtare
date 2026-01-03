@@ -34,7 +34,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
     <div className="space-y-12 max-w-1xl mx-auto">
       {Object.entries(groupedHolidays).map(([month, monthHolidays]) => (
         <div key={month}>
-          <h3 className="text-xl font-bold capitalize text-foreground mb-4 px-2">
+          <h3 className="text-xl font-bold capitalize text-foreground px-4 py-4 sticky top-[72px] z-30 bg-background/95 backdrop-blur-sm border-b-2 border-border/50">
             {month}
           </h3>
           <div className="space-y-2">
@@ -46,7 +46,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
                 <div 
                   key={holiday.date + holiday.name} 
                   className={cn(
-                    "flex items-center justify-between p-3  transition-colors border-b border-border",
+                    "flex items-center justify-between p-3 px-4 transition-colors border-b border-border",
                     isWknd && "opacity-90"
                   )}
                 >

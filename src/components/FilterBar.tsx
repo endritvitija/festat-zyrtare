@@ -21,7 +21,7 @@ export function FilterBar({
   onViewChange,
 }: FilterBarProps) {
   return (
-    <div className="sticky top-0 z-40 flex flex-col sm:flex-row items-center justify-between gap-4 w-full mb-8 py-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 transition-all">
+    <div className="sticky top-0 z-40 flex flex-col sm:flex-row items-center justify-between gap-4 w-full mb-8 py-4 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 transition-all">
       <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-lg">
         <button
           onClick={() => onCountryChange('BOTH')}
