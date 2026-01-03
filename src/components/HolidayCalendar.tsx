@@ -99,11 +99,11 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
 
         return (
           <div key={month.toString()} className="w-full">
-            <h3 className="text-xl font-bold capitalize text-foreground border-b-2 border-border/50 py-4 px-4 sticky top-[128px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm">
+            <h3 className="text-xl font-bold capitalize text-foreground py-4 px-4 sticky top-[128px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm">
               {format(month, 'MMMM', { locale: sq })}
             </h3>
 
-            <div className="grid grid-cols-7 text-sm  sticky top-[192px] sm:top-[136px] z-30 bg-background/95 backdrop-blur-sm py-2 px-4 border-b border-border/40">
+            <div className="grid grid-cols-7 text-sm sticky top-[188px] sm:top-[132px] z-30 bg-background/95 backdrop-blur-sm py-2 px-4 border-b-2 border-border/50">
               {['Hën', 'Mar', 'Mër', 'Enj', 'Pre', 'Sht', 'Die'].map(day => (
                 <div 
                   key={day} 
