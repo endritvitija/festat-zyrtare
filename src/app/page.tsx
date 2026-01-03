@@ -64,15 +64,7 @@ function HomeContent() {
               2026
             </span>
             <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1]">
-              Festat Zyrtare në
-              <br />
-              <span className="relative inline-block text-red-600 dark:text-red-400 mr-2 after:absolute after:bg-current after:bottom-1 after:left-0 after:h-[3px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300 cursor-default">
-                Shqipëri
-              </span>
-              dhe
-              <span className="relative inline-block text-blue-600 dark:text-blue-400 ml-2 after:absolute after:bg-current after:bottom-1 after:left-0 after:h-[3px] after:w-full after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300 cursor-default">
-                Kosovë
-              </span>
+              Festat Zyrtare 
             </h1>
             
             <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted-foreground pt-2">

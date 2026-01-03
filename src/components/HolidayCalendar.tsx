@@ -19,6 +19,8 @@ import { sq } from "date-fns/locale"
 import { Holiday, Country } from "@/types"
 import { cn } from "@/lib/utils"
 
+import { generateGoogleCalendarUrl, generateOutlookUrl, downloadIcsFile } from "@/lib/calendar"
+
 interface HolidayCalendarProps {
   holidays: Holiday[]
   countryFilter: Country
@@ -170,12 +172,36 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                         
                         {/* Tooltip on hover */}
                         <div className={cn(
-                          "absolute bottom-[calc(100%+5px)] w-max max-w-[180px] bg-popover text-popover-foreground text-xs font-medium p-2 rounded-md shadow-md border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center pointer-events-none",
+                          "absolute bottom-[calc(100%+5px)] w-max max-w-[200px] bg-popover text-popover-foreground text-xs font-medium p-3 rounded-md shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center",
                           day.getDay() === 1 ? "left-0 translate-x-0" : // Monday
                           day.getDay() === 0 ? "right-0 translate-x-0" : // Sunday
                           "left-1/2 -translate-x-1/2" // Others
                         )}>
-                          {holiday.name}
+                          <div className="mb-2 font-bold">{holiday.name}</div>
+                          <div className="flex flex-col gap-1.5">
+                            <a
+                              href={generateGoogleCalendarUrl(holiday)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline py-0.5"
+                            >
+                              + Google Calendar
+                            </a>
+                            <a
+                              href={generateOutlookUrl(holiday)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline py-0.5"
+                            >
+                              + Outlook / Office 365
+                            </a>
+                            <button
+                              onClick={() => downloadIcsFile(holiday)}
+                              className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline text-center py-0.5"
+                            >
+                              + iCal / Apple (.ics)
+                            </button>
+                          </div>
                           <div className={cn(
                             "absolute top-full border-4 border-transparent border-t-popover ml-[-1px] mt-[-1px]",
                             day.getDay() === 1 ? "left-4" :
