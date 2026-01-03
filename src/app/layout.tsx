@@ -47,14 +47,14 @@ export const metadata: Metadata = {
     other: [
       {
         rel: "icon",
-        url: "/favicon-32x32.png",
-        type: "image/png",
+        url: "/favicon.ico",
+        type: "image/x-icon",
         sizes: "32x32",
       },
       {
         rel: "icon",
-        url: "/favicon-16x16.png",
-        type: "image/png",
+        url: "/favicon.ico",
+        type: "image/x-icon",
         sizes: "16x16",
       },
     ],

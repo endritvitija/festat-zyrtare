@@ -19,8 +19,6 @@ import { sq } from "date-fns/locale"
 import { Holiday, Country } from "@/types"
 import { cn } from "@/lib/utils"
 
-import { generateGoogleCalendarUrl, generateOutlookUrl, downloadIcsFile } from "@/lib/calendar"
-
 interface HolidayCalendarProps {
   holidays: Holiday[]
   countryFilter: Country
@@ -178,30 +176,6 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                           "left-1/2 -translate-x-1/2" // Others
                         )}>
                           <div className="mb-2 font-bold">{holiday.name}</div>
-                          <div className="flex flex-col gap-1.5">
-                            <a
-                              href={generateGoogleCalendarUrl(holiday)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline py-0.5"
-                            >
-                              + Google Calendar
-                            </a>
-                            <a
-                              href={generateOutlookUrl(holiday)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline py-0.5"
-                            >
-                              + Outlook / Office 365
-                            </a>
-                            <button
-                              onClick={() => downloadIcsFile(holiday)}
-                              className="text-[10px] text-blue-600 dark:text-blue-400 hover:underline text-center py-0.5"
-                            >
-                              + iCal / Apple (.ics)
-                            </button>
-                          </div>
                           <div className={cn(
                             "absolute top-full border-4 border-transparent border-t-popover ml-[-1px] mt-[-1px]",
                             day.getDay() === 1 ? "left-4" :
