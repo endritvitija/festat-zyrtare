@@ -99,11 +99,11 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
 
         return (
           <div key={month.toString()} className="w-full">
-            <h3 className="text-xl font-bold capitalize text-foreground border-b-2 border-border/50 py-4 px-4 sticky top-[72px] z-30 bg-background/95 backdrop-blur-sm">
+            <h3 className="text-xl font-bold capitalize text-foreground border-b-2 border-border/50 py-4 px-4 sticky top-[128px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm">
               {format(month, 'MMMM', { locale: sq })}
             </h3>
 
-            <div className="grid grid-cols-7 text-sm  sticky top-[136px] z-30 bg-background/95 backdrop-blur-sm py-2 px-4 border-b border-border/40">
+            <div className="grid grid-cols-7 text-sm  sticky top-[192px] sm:top-[136px] z-30 bg-background/95 backdrop-blur-sm py-2 px-4 border-b border-border/40">
               {['Hën', 'Mar', 'Mër', 'Enj', 'Pre', 'Sht', 'Die'].map(day => (
                 <div 
                   key={day} 
@@ -117,7 +117,7 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
               ))}
             </div>
 
-            <div className="grid grid-cols-7 gap-px rounded-lg overflow-hidden border-border/50 mx-4 sm:mx-0">
+            <div className="grid grid-cols-7 mt-2 gap-px rounded-lg overflow-hidden border-border/50 mx-4 sm:mx-0">
               {days.map((day) => {
                 const holiday = getHolidayForDate(day)
                 const isCurrentMonth = isSameMonth(day, month)
@@ -169,18 +169,38 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                         </span>
                         
                         {/* Tooltip on hover */}
-                        <div className="absolute bottom-[calc(100%+5px)] left-1/2 -translate-x-1/2 w-max max-w-[180px] bg-popover text-popover-foreground text-xs font-medium p-2 rounded-md shadow-md border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center pointer-events-none">
+                        <div className={cn(
+                          "absolute bottom-[calc(100%+5px)] w-max max-w-[180px] bg-popover text-popover-foreground text-xs font-medium p-2 rounded-md shadow-md border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center pointer-events-none",
+                          day.getDay() === 1 ? "left-0 translate-x-0" : // Monday
+                          day.getDay() === 0 ? "right-0 translate-x-0" : // Sunday
+                          "left-1/2 -translate-x-1/2" // Others
+                        )}>
                           {holiday.name}
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-popover ml-[-1px] mt-[-1px]"></div>
+                          <div className={cn(
+                            "absolute top-full border-4 border-transparent border-t-popover ml-[-1px] mt-[-1px]",
+                            day.getDay() === 1 ? "left-4" :
+                            day.getDay() === 0 ? "right-4" :
+                            "left-1/2 -translate-x-1/2"
+                          )}></div>
                         </div>
                       </div>
                     )}
 
                     {isBridgeDay && (
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="absolute bottom-[calc(100%+5px)] left-1/2 -translate-x-1/2 w-max max-w-[200px] bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 text-xs font-medium p-2 rounded-md shadow-md border border-yellow-200 dark:border-yellow-800 z-50 text-center pointer-events-none">
+                        <div className={cn(
+                          "absolute bottom-[calc(100%+5px)] w-max max-w-[200px] bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 text-xs font-medium p-2 rounded-md shadow-md border border-yellow-200 dark:border-yellow-800 z-50 text-center pointer-events-none",
+                          day.getDay() === 1 ? "left-0 translate-x-0" : // Monday
+                          day.getDay() === 0 ? "right-0 translate-x-0" : // Sunday
+                          "left-1/2 -translate-x-1/2" // Others
+                        )}>
                           Rekomandim për të marrë një ditë pushimi
-                          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-yellow-100 dark:border-t-yellow-900 ml-[-1px] mt-[-1px]"></div>
+                          <div className={cn(
+                            "absolute top-full border-4 border-transparent border-t-yellow-100 dark:border-t-yellow-900 ml-[-1px] mt-[-1px]",
+                            day.getDay() === 1 ? "left-4" :
+                            day.getDay() === 0 ? "right-4" :
+                            "left-1/2 -translate-x-1/2"
+                          )}></div>
                         </div>
                       </div>
                     )}

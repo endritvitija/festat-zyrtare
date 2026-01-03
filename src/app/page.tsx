@@ -116,7 +116,7 @@ function HomeContent() {
               <HolidayList holidays={holidays2026} countryFilter={countryFilter} />
             )}
           </div>
-          <div className="mt-12 p-4 rounded-lg bg-muted/50 border border-border mx-4 sm:mx-0">
+          <div className="mt-12 p-4 rounded-lg mx-4 sm:mx-0">
             <p className="text-sm sm:text-base font-medium text-foreground/80 text-center italic">
               Shënim: Data e festave të Kurban Bajramit dhe Bajramit të Madh mund të ndryshojë sipas kalendarit hënor. 
               Në rast se do të ketë ndryshime, do të viheni në dijeni me një njoftim të dytë.

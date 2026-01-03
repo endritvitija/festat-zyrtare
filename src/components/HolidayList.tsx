@@ -34,7 +34,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
     <div className="space-y-12 max-w-1xl mx-auto">
       {Object.entries(groupedHolidays).map(([month, monthHolidays]) => (
         <div key={month}>
-          <h3 className="text-xl font-bold capitalize text-foreground px-4 py-4 sticky top-[72px] z-30 bg-background/95 backdrop-blur-sm border-b-2 border-border/50">
+          <h3 className="text-xl font-bold capitalize text-foreground px-4 py-4 sticky top-[128px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm border-b-2 border-border/50">
             {month}
           </h3>
           <div className="space-y-2">
@@ -55,8 +55,8 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
                       "flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-muted/30",
                       isWknd && "text-red-500/80"
                     )}>
-                      <span className="text-[10px] font-bold uppercase text-muted-foreground">
-                        {format(date, 'EEE', { locale: sq })}
+                      <span className={cn("text-[10px] font-bold uppercase text-muted-foreground", isWknd && "text-red-500/80")}>
+                        {format(date, 'EEEE', { locale: sq })}
                       </span>
                       <span className="text-lg font-bold leading-none">
                         {format(date, 'd')}
