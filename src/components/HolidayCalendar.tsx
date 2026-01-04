@@ -39,12 +39,10 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
     )
   }, [holidays, countryFilter])
 
-  // Pre-calculate bridge days for the entire year
   const bridgeDays = React.useMemo(() => {
     const bridgeDates = new Set<string>()
     const allDays = eachDayOfInterval({ start: startDate, end: endDate })
     
-    // Helper to check if a date is a non-working day (weekend or holiday)
     const isNonWorkingDay = (date: Date) => {
       const dateStr = format(date, 'yyyy-MM-dd')
       const isWknd = isWeekend(date)
@@ -58,22 +56,12 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
       const day = allDays[i]
       
       if (isNonWorkingDay(day)) {
-        // We hit a non-working day. Check the previous sequence of work days.
         if (currentWorkDaySequence.length > 0 && currentWorkDaySequence.length <= 3) {
-          // Check if the sequence was preceded by a non-working day
           const firstDayOfSeq = currentWorkDaySequence[0]
           const prevDay = new Date(firstDayOfSeq)
           prevDay.setDate(prevDay.getDate() - 1)
           
-          // If it's the start of the year, we treat it as a boundary, but strictly speaking 
-          // a bridge needs a holiday/weekend BEFORE it too. 
-          // Assuming Jan 1 is usually a holiday, this works. 
-          // If the sequence started at the very beginning of the range, check if prev day (Dec 31) was non-working?
-          // For simplicity, we only bridge if bounded by non-working days within our checked range or boundaries.
-          // Actually, let's just check if the day BEFORE the sequence was non-working.
-          
           if (isNonWorkingDay(prevDay)) {
-             // Valid bridge! Add to set.
              currentWorkDaySequence.forEach(d => bridgeDates.add(format(d, 'yyyy-MM-dd')))
           }
         }
@@ -99,11 +87,11 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
 
         return (
           <div key={month.toString()} className="w-full">
-            <h3 className="text-xl font-bold capitalize text-foreground py-4 px-4 sticky top-[128px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm">
+            <h3 className="text-xl font-bold capitalize text-foreground py-4 px-4 sticky top-[180px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm">
               {format(month, 'MMMM', { locale: sq })}
             </h3>
 
-            <div className="grid grid-cols-7 text-sm sticky top-[188px] sm:top-[132px] z-30 bg-background/95 backdrop-blur-sm py-2 px-4 border-b-2 border-border/50">
+            <div className="grid grid-cols-7 text-sm sticky top-[240px] sm:top-[132px] z-30 bg-background/95 backdrop-blur-sm py-2 px-4 border-b-2 border-border/50">
               {['Hën', 'Mar', 'Mër', 'Enj', 'Pre', 'Sht', 'Die'].map(day => (
                 <div 
                   key={day} 
@@ -167,13 +155,12 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                         <span className="text-[10px] leading-tight font-medium text-muted-foreground line-clamp-2 hidden sm:block">
                           {holiday.name}
                         </span>
-                        
-                        {/* Tooltip on hover */}
+                          
                         <div className={cn(
                           "absolute bottom-[calc(100%+5px)] w-max max-w-[200px] bg-popover text-popover-foreground text-xs font-medium p-3 rounded-md shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center",
-                          day.getDay() === 1 ? "left-0 translate-x-0" : // Monday
-                          day.getDay() === 0 ? "right-0 translate-x-0" : // Sunday
-                          "left-1/2 -translate-x-1/2" // Others
+                          day.getDay() === 1 ? "left-0 translate-x-0" :
+                          day.getDay() === 0 ? "right-0 translate-x-0" :
+                          "left-1/2 -translate-x-1/2"
                         )}>
                           <div className="mb-2 font-bold">{holiday.name}</div>
                           <div className={cn(
@@ -190,9 +177,9 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         <div className={cn(
                           "absolute bottom-[calc(100%+5px)] w-max max-w-[200px] bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 text-xs font-medium p-2 rounded-md shadow-md border border-yellow-200 dark:border-yellow-800 z-50 text-center pointer-events-none",
-                          day.getDay() === 1 ? "left-0 translate-x-0" : // Monday
-                          day.getDay() === 0 ? "right-0 translate-x-0" : // Sunday
-                          "left-1/2 -translate-x-1/2" // Others
+                          day.getDay() === 1 ? "left-0 translate-x-0" :
+                          day.getDay() === 0 ? "right-0 translate-x-0" :
+                          "left-1/2 -translate-x-1/2"
                         )}>
                           Rekomandim për të marrë një ditë pushimi
                           <div className={cn(

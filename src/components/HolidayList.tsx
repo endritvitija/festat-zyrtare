@@ -92,7 +92,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
     <div className="space-y-12 max-w-1xl mx-auto">
       {Object.entries(groupedHolidays).map(([month, monthHolidays]) => (
         <div key={month}>
-          <h3 className="text-xl font-bold capitalize text-foreground px-4 py-4 sticky top-[128px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm border-b-2 border-border/50">
+          <h3 className="text-xl font-bold capitalize text-foreground px-4 py-4 sticky top-[180px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm border-b-2 border-border/50">
             {month}
           </h3>
           <div className="space-y-2">

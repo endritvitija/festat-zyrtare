@@ -5,16 +5,15 @@ import { useSearchParams, useRouter, usePathname } from "next/navigation"
 import { FilterBar } from "@/components/FilterBar"
 import { HolidayCalendar } from "@/components/HolidayCalendar"
 import { HolidayList } from "@/components/HolidayList"
-import { ThemeToggle } from "@/components/ThemeToggle"
 import { holidays2026 } from "@/data/holidays"
 import { Country } from "@/types"
+import { GitBranch } from "lucide-react"
 
 function HomeContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
 
-  // Initialize state from URL or defaults
   const [countryFilter, setCountryFilter] = React.useState<Country>(() => {
     const country = searchParams.get('country')
     if (country === 'AL' || country === 'XK' || country === 'BOTH') {
@@ -31,7 +30,6 @@ function HomeContent() {
     return 'CALENDAR'
   })
 
-  // Update URL when state changes
   React.useEffect(() => {
     const currentQuery = searchParams.toString()
     const params = new URLSearchParams(currentQuery)
@@ -110,8 +108,7 @@ function HomeContent() {
           </div>
           <div className="mt-12 p-4 rounded-lg mx-4 sm:mx-0">
             <p className="text-sm sm:text-base font-medium text-foreground/80 text-center italic">
-              Shënim: Data e festave të Kurban Bajramit dhe Bajramit të Madh mund të ndryshojë sipas kalendarit hënor. 
-              Në rast se do të ketë ndryshime, do të viheni në dijeni me një njoftim të dytë.
+              Shënim: Datat e festave të Bajramit të Madh dhe Kurban Bajramit mund të ndryshojnë sipas kalendarit hënor.
             </p>
           </div>
         </div>
@@ -138,6 +135,15 @@ function HomeContent() {
             >
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
               Burimi për Kosovë
+            </a>
+            <a 
+              href="https://github.com/endritvitija/festat-zyrtare" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors flex items-center gap-1"
+            >
+              <GitBranch className="w-3.5 h-3.5" />
+              GitHub
             </a>
           </div>
           <p className="text-xs text-muted-foreground/60">
