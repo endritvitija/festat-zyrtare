@@ -28,10 +28,29 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
   const year = 2026
   const startDate = startOfYear(new Date(year, 0, 1))
   const endDate = endOfYear(new Date(year, 0, 1))
+  const [activeDate, setActiveDate] = React.useState<string | null>(null)
   
   const months = React.useMemo(() => {
     return eachMonthOfInterval({ start: startDate, end: endDate })
   }, [startDate, endDate])
+
+  // Close tooltip when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('[data-date-cell]')) {
+        setActiveDate(null)
+      }
+    }
+    
+    document.addEventListener('click', handleClickOutside)
+    document.addEventListener('touchstart', handleClickOutside)
+    
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [])
 
   const filteredHolidays = React.useMemo(() => {
     return holidays.filter(h => 
@@ -117,12 +136,20 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                   return <div key={day.toString()} className="min-h-[80px]" />
                 }
 
+                const isActive = activeDate === dateStr
+                
                 return (
                   <div
                     key={day.toString()}
+                    data-date-cell
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setActiveDate(isActive ? null : dateStr)
+                    }}
                     className={cn(
-                      "min-h-[80px] p-2 rounded-lg border border-transparent transition-all relative group",
+                      "min-h-[80px] p-2 rounded-lg border border-transparent transition-all relative group cursor-pointer",
                       "hover:border-border hover:bg-muted/30",
+                      isActive && "border-border bg-muted/30",
                       holiday ? "bg-orange-50 dark:bg-orange-950/20" : 
                       isBridgeDay ? "bg-yellow-50 dark:bg-yellow-900/10" : "bg-card",
                       isWknd && !holiday && "bg-gray-100/80 dark:bg-gray-800/40",
@@ -157,7 +184,8 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                         </span>
                           
                         <div className={cn(
-                          "absolute bottom-[calc(100%+5px)] w-max max-w-[200px] bg-popover text-popover-foreground text-xs font-medium p-3 rounded-md shadow-lg border border-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 text-center",
+                          "absolute bottom-[calc(100%+5px)] w-max max-w-[200px] bg-popover text-popover-foreground text-xs font-medium p-3 rounded-md shadow-lg border border-border transition-all duration-200 z-50 text-center",
+                          isActive ? "opacity-100 visible" : "opacity-0 invisible group-hover:opacity-100 group-hover:visible",
                           day.getDay() === 1 ? "left-0 translate-x-0" :
                           day.getDay() === 0 ? "right-0 translate-x-0" :
                           "left-1/2 -translate-x-1/2"
@@ -174,7 +202,10 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                     )}
 
                     {isBridgeDay && (
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className={cn(
+                        "absolute inset-0 flex items-center justify-center transition-opacity",
+                        isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                      )}>
                         <div className={cn(
                           "absolute bottom-[calc(100%+5px)] w-max max-w-[200px] bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-100 text-xs font-medium p-2 rounded-md shadow-md border border-yellow-200 dark:border-yellow-800 z-50 text-center pointer-events-none",
                           day.getDay() === 1 ? "left-0 translate-x-0" :
