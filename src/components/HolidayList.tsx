@@ -11,9 +11,48 @@ interface HolidayListProps {
   countryFilter: Country;
 }
 
-function HolidayListItem({ holiday }: { holiday: Holiday }) {
+function HolidayListItem({ holiday, countryFilter }: { holiday: Holiday; countryFilter: Country }) {
   const date = parseISO(holiday.date);
   const isWknd = isWeekend(date);
+
+  const countryNames: Record<Country, string> = {
+    AL: 'Shqipëri',
+    XK: 'Kosovë',
+    ME: 'Mali i Zi',
+    MK: 'Maqedonia e Veriut',
+    BOTH: 'Të gjitha',
+  };
+
+  const countryFlags: Record<Country, string> = {
+    AL: '🇦🇱',
+    XK: '🇽🇰',
+    ME: '🇲🇪',
+    MK: '🇲🇰',
+    BOTH: '🌍',
+  };
+
+  const getDisplayFlags = () => {
+    if (holiday.country === 'BOTH') {
+      if (countryFilter === 'BOTH') {
+        return (
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
+            🇦🇱 🇽🇰 🇲🇪 🇲🇰 {countryNames['BOTH']}
+          </span>
+        );
+      } else {
+        return (
+          <span className="text-xs text-muted-foreground flex items-center gap-1">
+            {countryFlags[countryFilter]} {countryNames[countryFilter]}
+          </span>
+        );
+      }
+    }
+    return (
+      <span className="text-xs text-muted-foreground flex items-center gap-1">
+        {countryFlags[holiday.country]} {countryNames[holiday.country]}
+      </span>
+    );
+  };
 
   return (
     <div
@@ -44,21 +83,7 @@ function HolidayListItem({ holiday }: { holiday: Holiday }) {
         <div>
           <h4 className="font-medium text-foreground">{holiday.name}</h4>
           <div className="flex items-center gap-2 mt-0.5">
-            {holiday.country === "AL" && (
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                🇦🇱 Shqipëri
-              </span>
-            )}
-            {holiday.country === "XK" && (
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                🇽🇰 Kosovë
-              </span>
-            )}
-            {holiday.country === "BOTH" && (
-              <span className="text-xs text-muted-foreground flex items-center gap-1">
-                🇦🇱 🇽🇰 Të dyja
-              </span>
-            )}
+            {getDisplayFlags()}
           </div>
         </div>
       </div>
@@ -100,6 +125,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
               <HolidayListItem
                 key={holiday.date + holiday.name}
                 holiday={holiday}
+                countryFilter={countryFilter}
               />
             ))}
           </div>

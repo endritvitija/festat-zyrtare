@@ -25,6 +25,29 @@ interface HolidayCalendarProps {
 }
 
 export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProps) {
+  const countryFlags: Record<Country, string> = {
+    AL: '🇦🇱',
+    XK: '🇽🇰',
+    ME: '🇲🇪',
+    MK: '🇲🇰',
+    BOTH: '🌍',
+  };
+
+  const countryNames: Record<Country, string> = {
+    AL: 'Shqipëri',
+    XK: 'Kosovë',
+    ME: 'Mali i Zi',
+    MK: 'Maqedonia e Veriut',
+    BOTH: 'Të gjitha',
+  };
+
+  const getDisplayCountry = (holiday: Holiday): string => {
+    if (holiday.country === 'BOTH') {
+      return countryFilter === 'BOTH' ? countryNames['BOTH'] : countryNames[countryFilter];
+    }
+    return countryNames[holiday.country];
+  };
+  
   const year = 2026
   const startDate = startOfYear(new Date(year, 0, 1))
   const endDate = endOfYear(new Date(year, 0, 1))
@@ -131,6 +154,8 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                 const isWknd = isWeekend(day)
                 const dateStr = format(day, 'yyyy-MM-dd')
                 const isBridgeDay = bridgeDays.has(dateStr)
+                const dayNumber = parseInt(format(day, 'd'))
+                const isFirstRow = isCurrentMonth && dayNumber <= 7
 
                 if (!isCurrentMonth) {
                   return <div key={day.toString()} className="min-h-[80px]" />
@@ -169,14 +194,58 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                     
                     {holiday && (
                       <div className="flex flex-col gap-1">
-                        <div className="flex gap-1">
-                          {holiday.country === 'AL' && <div className="w-1.5 h-1.5 rounded-full bg-red-500" />}
-                          {holiday.country === 'XK' && <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />}
-                          {holiday.country === 'BOTH' && (
-                            <div className="flex gap-0.5">
-                              <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                              <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                            </div>
+                        <div className="flex gap-1 items-center">
+                          {holiday.country === 'BOTH' ? (
+                            countryFilter === 'BOTH' ? (
+                              <>
+                                {/* Mobile: multi-colored pill icon */}
+                                <div className="flex items-center sm:hidden">
+                                  <div className="w-4 h-2 rounded-full flex overflow-hidden shadow-sm">
+                                    <div className="w-1/4 bg-red-500"></div>
+                                    <div className="w-1/4 bg-blue-500"></div>
+                                    <div className="w-1/4 bg-green-500"></div>
+                                    <div className="w-1/4 bg-purple-500"></div>
+                                  </div>
+                                </div>
+                                {/* Desktop: all flags */}
+                                <div className="hidden sm:flex gap-0.5">
+                                  <span className="text-base leading-none">{countryFlags['AL']}</span>
+                                  <span className="text-base leading-none">{countryFlags['XK']}</span>
+                                  <span className="text-base leading-none">{countryFlags['ME']}</span>
+                                  <span className="text-base leading-none">{countryFlags['MK']}</span>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                {/* Mobile: single colored pill */}
+                                <div className="flex items-center sm:hidden">
+                                  <div className={cn(
+                                    "w-4 h-2 rounded-full shadow-sm",
+                                    countryFilter === 'AL' && "bg-red-500",
+                                    countryFilter === 'XK' && "bg-blue-500",
+                                    countryFilter === 'ME' && "bg-green-500",
+                                    countryFilter === 'MK' && "bg-purple-500"
+                                  )}></div>
+                                </div>
+                                {/* Desktop: flag */}
+                                <span className="hidden sm:inline text-base leading-none">{countryFlags[countryFilter]}</span>
+                              </>
+                            )
+                          ) : (
+                            <>
+                              {/* Mobile: single colored pill */}
+                              <div className="flex items-center sm:hidden">
+                                <div className={cn(
+                                  "w-4 h-2 rounded-full shadow-sm",
+                                  holiday.country === 'AL' && "bg-red-500",
+                                  holiday.country === 'XK' && "bg-blue-500",
+                                  holiday.country === 'ME' && "bg-green-500",
+                                  holiday.country === 'MK' && "bg-purple-500"
+                                )}></div>
+                              </div>
+                              {/* Desktop: flag */}
+                              <span className="hidden sm:inline text-base leading-none">{countryFlags[holiday.country]}</span>
+                            </>
                           )}
                         </div>
                         <span className="text-[10px] leading-tight font-medium text-muted-foreground line-clamp-2 hidden sm:block">
@@ -184,15 +253,21 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                         </span>
                           
                         <div className={cn(
-                          "absolute bottom-[calc(100%+5px)] w-max max-w-[200px] bg-popover text-popover-foreground text-xs font-medium p-3 rounded-md shadow-lg border border-border transition-all duration-200 z-50 text-center",
+                          "absolute w-max max-w-[200px] bg-popover text-popover-foreground text-xs font-medium p-3 rounded-md shadow-lg border border-border transition-all duration-200 z-50 text-center",
+                          isFirstRow ? "top-[calc(100%+5px)]" : "bottom-[calc(100%+5px)]",
                           isActive ? "opacity-100 visible" : "opacity-0 invisible group-hover:opacity-100 group-hover:visible",
                           day.getDay() === 1 ? "left-0 translate-x-0" :
                           day.getDay() === 0 ? "right-0 translate-x-0" :
                           "left-1/2 -translate-x-1/2"
                         )}>
                           <div className="mb-2 font-bold">{holiday.name}</div>
+                          <div className="text-[10px] text-muted-foreground mt-1">
+                            {getDisplayCountry(holiday)}
+                          </div>
                           <div className={cn(
-                            "absolute top-full border-4 border-transparent border-t-popover ml-[-1px] mt-[-1px]",
+                            isFirstRow 
+                              ? "absolute bottom-full border-4 border-transparent border-b-popover mb-[-1px]"
+                              : "absolute top-full border-4 border-transparent border-t-popover mt-[-1px]",
                             day.getDay() === 1 ? "left-4" :
                             day.getDay() === 0 ? "right-4" :
                             "left-1/2 -translate-x-1/2"

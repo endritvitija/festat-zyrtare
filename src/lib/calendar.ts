@@ -1,5 +1,16 @@
 import { format, parseISO, addDays } from "date-fns";
-import { Holiday } from "@/types";
+import { Holiday, Country } from "@/types";
+
+function getCountryName(country: Country): string {
+  const countryNames: Record<Country, string> = {
+    AL: "Shqipëri",
+    XK: "Kosovë",
+    ME: "Mali i Zi",
+    MK: "Maqedonia e Veriut",
+    BOTH: "Të gjitha",
+  };
+  return countryNames[country];
+}
 
 function formatDtstampUtc(date: Date): string {
   return date
@@ -25,10 +36,8 @@ export function generateGoogleCalendarUrl(holiday: Holiday) {
     action: "TEMPLATE",
     text: holiday.name,
     dates: `${startDate}/${endDate}`,
-    details: `Festa Zyrtare në ${
-      holiday.country === "AL" ? "Shqipëri" : "Kosovë"
-    }`,
-    location: holiday.country === "AL" ? "Shqipëri" : "Kosovë",
+    details: `Festa Zyrtare në ${getCountryName(holiday.country)}`,
+    location: getCountryName(holiday.country),
   });
 
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
@@ -45,10 +54,8 @@ export function generateOutlookUrl(holiday: Holiday) {
     subject: holiday.name,
     startdt: startDate,
     enddt: endDate,
-    body: `Festa Zyrtare në ${
-      holiday.country === "AL" ? "Shqipëri" : "Kosovë"
-    }`,
-    location: holiday.country === "AL" ? "Shqipëri" : "Kosovë",
+    body: `Festa Zyrtare në ${getCountryName(holiday.country)}`,
+    location: getCountryName(holiday.country),
     allday: "true",
   });
 
@@ -242,23 +249,12 @@ export function generateIcsContent(holiday: Holiday) {
   const date = parseISO(holiday.date);
   const dtstamp = formatDtstampUtc(new Date());
 
-  const calendarName =
-    holiday.country === "AL"
-      ? "Festat Zyrtare - Shqipëri"
-      : holiday.country === "XK"
-      ? "Festat Zyrtare - Kosovë"
-      : "Festat Zyrtare - Shqipëri & Kosovë";
-  const calendarDesc =
-    holiday.country === "AL"
-      ? "Lista e festave zyrtare për Shqipëri"
-      : holiday.country === "XK"
-      ? "Lista e festave zyrtare për Kosovë"
-      : "Lista e festave zyrtare për Shqipëri dhe Kosovë";
+  const countryName = getCountryName(holiday.country);
+  const calendarName = `Festat Zyrtare - ${countryName}`;
+  const calendarDesc = `Lista e festave zyrtare për ${countryName}`;
 
   const summary = escapeIcsText(holiday.name);
-  const location = escapeIcsText(
-    holiday.country === "AL" ? "Shqipëri" : "Kosovë"
-  );
+  const location = escapeIcsText(countryName);
 
   const safeName = holiday.name.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase();
   const baseUid = `${holiday.date.replace(
@@ -297,9 +293,7 @@ export function generateIcsContent(holiday: Holiday) {
           const endDate = format(addDays(gregorianDate, 1), "yyyyMMdd");
           const uid = `${baseUid}-${yearOffset}`;
 
-          let description = `Festa Zyrtare në ${
-            holiday.country === "AL" ? "Shqipëri" : "Kosovë"
-          }`;
+          let description = `Festa Zyrtare në ${countryName}`;
           const hijriDateStr = getHijriDateString(gregorianDate);
           if (hijriDateStr) {
             description += `\n\nData në kalendarin Hijri (Umm al-Qura): ${hijriDateStr}`;
@@ -335,9 +329,7 @@ export function generateIcsContent(holiday: Holiday) {
         const endDate = format(addDays(parseISO(gDate), 1), "yyyyMMdd");
         const uid = `${baseUid}-precomputed-${idx}`;
 
-        let description = `Festa Zyrtare në ${
-          holiday.country === "AL" ? "Shqipëri" : "Kosovë"
-        }`;
+        let description = `Festa Zyrtare në ${countryName}`;
         const hijriYear = (hijriParts?.year || 1447) + idx;
         description += `\n\nData në kalendarin Hijri (Umm al-Qura): ${
           eidType === "fitr" ? "1 Shawwal" : "10 Dhu al-Hijjah"
@@ -368,9 +360,7 @@ export function generateIcsContent(holiday: Holiday) {
     if (!addedHijriEvents) {
       const startDate = format(date, "yyyyMMdd");
       const endDate = format(addDays(date, 1), "yyyyMMdd");
-      const description = `Festa Zyrtare në ${
-        holiday.country === "AL" ? "Shqipëri" : "Kosovë"
-      } (fallback pa konvertim Hijri)`;
+      const description = `Festa Zyrtare në ${countryName} (fallback pa konvertim Hijri)`;
 
       icsLines.push(
         "BEGIN:VEVENT",
@@ -391,9 +381,7 @@ export function generateIcsContent(holiday: Holiday) {
   } else {
     const startDate = format(date, "yyyyMMdd");
     const endDate = format(addDays(date, 1), "yyyyMMdd");
-    const description = `Festa Zyrtare në ${
-      holiday.country === "AL" ? "Shqipëri" : "Kosovë"
-    }`;
+    const description = `Festa Zyrtare në ${countryName}`;
 
     icsLines.push(
       "BEGIN:VEVENT",

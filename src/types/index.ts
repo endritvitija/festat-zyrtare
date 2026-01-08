@@ -1,4 +1,4 @@
-export type Country = 'AL' | 'XK' | 'BOTH';
+export type Country = 'AL' | 'XK' | 'ME' | 'MK' | 'BOTH';
 
 export interface Holiday {
   date: string; // YYYY-MM-DD

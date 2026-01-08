@@ -16,7 +16,7 @@ function HomeContent() {
 
   const [countryFilter, setCountryFilter] = React.useState<Country>(() => {
     const country = searchParams.get('country')
-    if (country === 'AL' || country === 'XK' || country === 'BOTH') {
+    if (country === 'AL' || country === 'XK' || country === 'ME' || country === 'MK' || country === 'BOTH') {
       return country as Country
     }
     return 'BOTH'
@@ -75,11 +75,19 @@ function HomeContent() {
                 Kosovë
               </div>
               <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+                Mali i Zi
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
+                Maqedonia e Veriut
+              </div>
+              <div className="flex items-center gap-2">
                 <div className="flex gap-0.5">
                   <span className="w-2.5 h-2.5 rounded-l-full bg-red-500"></span>
                   <span className="w-2.5 h-2.5 rounded-r-full bg-blue-500"></span>
                 </div>
-                Të dyja
+                Të gjitha
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30"></span>
