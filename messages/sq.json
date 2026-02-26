@@ -1,0 +1,67 @@
+{
+  "common": {
+    "year": "2026",
+    "loading": "Duke u ngarkuar...",
+    "all": "Të gjitha",
+    "weekend": "Fundjavë",
+    "recommendation": "Rekomandim për pushim",
+    "recommendationTooltip": "Rekomandim për të marrë një ditë pushimi"
+  },
+  "countries": {
+    "AL": "Shqipëri",
+    "XK": "Kosovë",
+    "ME": "Mali i Zi",
+    "MK": "Maqedonia e Veriut",
+    "BOTH": "Të gjitha"
+  },
+  "countriesDownload": {
+    "AL": "Shqiperi",
+    "XK": "Kosovë",
+    "ME": "Malin e Zi",
+    "MK": "Maqedonin e Veriut"
+  },
+  "home": {
+    "title": "Festat Zyrtare",
+    "note": "Shënim: Datat e festave të Bajramit të Madh dhe Kurban Bajramit mund të ndryshojnë sipas kalendarit hënor."
+  },
+  "footer": {
+    "copyright": "© 2026 Festat Zyrtare. Të gjitha të drejtat e rezervuara.",
+    "sourceAlbania": "Burimi për Shqipëri",
+    "sourceKosovo": "Burimi për Kosovë",
+    "github": "GitHub",
+    "updated": "Përditësuar më: 02.01.2026",
+    "subscribeTitle": "Email çdo muaj për festat",
+    "subscribeDescription": "Do të të dërgojmë një email në fillim të çdo muaji me festat zyrtare të atij muaji.",
+    "subscribePlaceholder": "Emaili juaj",
+    "subscribeButton": "Abonohu",
+    "subscribeSuccess": "U abonuat! Do të merrni festat e {month} me email.",
+    "subscribeError": "Diçka shkoi keq. Provoni përsëri."
+  },
+  "filterBar": {
+    "downloadFor": "Shkarko festat për {country}",
+    "downloadTitle": "Shkarko festat zyrtare për {country} (.ics)",
+    "selectCountryToDownload": "Zgjidhni një shtet për të shkarkuar",
+    "selectCountryToDownloadTitle": "Zgjidhni një shtet për të shkarkuar festat",
+    "calendarView": "Pamje kalendar",
+    "listView": "Pamje listë"
+  },
+  "theme": {
+    "light": "Tema e ndritur",
+    "dark": "Tema e errët"
+  },
+  "weekdaysShort": {
+    "0": "Hën",
+    "1": "Mar",
+    "2": "Mër",
+    "3": "Enj",
+    "4": "Pre",
+    "5": "Sht",
+    "6": "Die"
+  },
+  "metadata": {
+    "title": "Festat Zyrtare 2026 - Shqipëri & Kosovë",
+    "titleTemplate": "%s | Festat Zyrtare",
+    "description": "Kalendari i plotë i festave zyrtare për Shqipërinë dhe Kosovën për vitin 2026. Planifikoni pushimet tuaja me lehtësi.",
+    "siteName": "Festat Zyrtare"
+  }
+}

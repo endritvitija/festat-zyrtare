@@ -2,9 +2,12 @@
 
 import * as React from "react";
 import { format, parseISO, isWeekend } from "date-fns";
-import { sq } from "date-fns/locale";
+import { sq, enUS, de } from "date-fns/locale";
+import { useLocale, useTranslations } from "next-intl";
 import { Holiday, Country } from "@/types";
 import { cn } from "@/lib/utils";
+
+const dateFnsLocaleMap = { sq, en: enUS, de } as const;
 
 interface HolidayListProps {
   holidays: Holiday[];
@@ -14,13 +17,16 @@ interface HolidayListProps {
 function HolidayListItem({ holiday, countryFilter }: { holiday: Holiday; countryFilter: Country }) {
   const date = parseISO(holiday.date);
   const isWknd = isWeekend(date);
+  const locale = useLocale() as "sq" | "en" | "de";
+  const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
+  const tCountries = useTranslations("countries");
 
   const countryNames: Record<Country, string> = {
-    AL: 'Shqipëri',
-    XK: 'Kosovë',
-    ME: 'Mali i Zi',
-    MK: 'Maqedonia e Veriut',
-    BOTH: 'Të gjitha',
+    AL: tCountries("AL"),
+    XK: tCountries("XK"),
+    ME: tCountries("ME"),
+    MK: tCountries("MK"),
+    BOTH: tCountries("BOTH"),
   };
 
   const countryFlags: Record<Country, string> = {
@@ -74,7 +80,7 @@ function HolidayListItem({ holiday, countryFilter }: { holiday: Holiday; country
               isWknd && "text-red-500/80"
             )}
           >
-            {format(date, "EEEE", { locale: sq })}
+            {format(date, "EEEE", { locale: dateFnsLocale })}
           </span>
           <span className="text-lg font-bold leading-none">
             {format(date, "d")}
@@ -92,6 +98,9 @@ function HolidayListItem({ holiday, countryFilter }: { holiday: Holiday; country
 }
 
 export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
+  const locale = useLocale() as "sq" | "en" | "de";
+  const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
+
   const filteredHolidays = React.useMemo(() => {
     return holidays.filter(
       (h) =>
@@ -104,14 +113,23 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
   const groupedHolidays = React.useMemo(() => {
     const groups: Record<string, Holiday[]> = {};
     filteredHolidays.forEach((holiday) => {
-      const month = format(parseISO(holiday.date), "MMMM", { locale: sq });
+      const month = format(parseISO(holiday.date), "MMMM", { locale: dateFnsLocale });
       if (!groups[month]) {
         groups[month] = [];
       }
       groups[month].push(holiday);
     });
-    return groups;
-  }, [filteredHolidays]);
+    // Sort each month's holidays by date, then return entries sorted by month index (Jan=0 .. Dec=11)
+    const entries = Object.entries(groups).map(([month, monthHolidays]) => {
+      const sorted = [...monthHolidays].sort(
+        (a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime()
+      );
+      const monthIndex = parseISO(sorted[0].date).getMonth();
+      return { month, monthHolidays: sorted, monthIndex };
+    });
+    entries.sort((a, b) => a.monthIndex - b.monthIndex);
+    return entries;
+  }, [filteredHolidays, dateFnsLocale]);
 
   const listContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -125,10 +143,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
 
   return (
     <div ref={listContainerRef} className="space-y-12 max-w-1xl mx-auto">
-      {Object.entries(groupedHolidays).map(([month, monthHolidays]) => {
-        const firstDate = parseISO(monthHolidays[0].date);
-        const monthIndex = firstDate.getMonth();
-        return (
+      {groupedHolidays.map(({ month, monthHolidays, monthIndex }) => (
         <div key={month} data-month-index={monthIndex}>
           <h3 className="text-xl font-bold capitalize text-foreground px-4 py-4 sticky top-[180px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm border-b-2 border-border/50">
             {month}
@@ -143,8 +158,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
             ))}
           </div>
         </div>
-        );
-      })}
+      ))}
     </div>
   );
 }

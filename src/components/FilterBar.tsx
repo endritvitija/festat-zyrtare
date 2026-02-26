@@ -2,12 +2,14 @@
 
 import * as React from "react";
 import { Calendar, List, Download, ChevronDown } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Country } from "@/types";
 import { cn } from "@/lib/utils";
 import { downloadBulkIcsFile } from "@/lib/calendar";
 import { holidays2026 } from "@/data/holidays";
 
 import { ThemeToggle } from "./ThemeToggle";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface FilterBarProps {
   countryFilter: Country;
@@ -24,23 +26,26 @@ export function FilterBar({
 }: FilterBarProps) {
   const [isCountryMenuOpen, setIsCountryMenuOpen] = React.useState(false);
   const countryDropdownRef = React.useRef<HTMLDivElement>(null);
+  const tFilter = useTranslations("filterBar");
+  const tCountries = useTranslations("countries");
+  const tCountriesDownload = useTranslations("countriesDownload");
 
   const hasCountrySelected = countryFilter !== "BOTH";
   const selectedCountryCode = hasCountrySelected ? countryFilter : null;
 
   const countryNames: Record<Country, string> = {
-    BOTH: "Të gjitha",
-    AL: "Shqipëri",
-    XK: "Kosovë",
-    ME: "Mali i Zi",
-    MK: "Maqedonia e Veriut",
+    BOTH: tCountries("BOTH"),
+    AL: tCountries("AL"),
+    XK: tCountries("XK"),
+    ME: tCountries("ME"),
+    MK: tCountries("MK"),
   };
 
   const downloadButtonCountryNames: Record<"AL" | "XK" | "ME" | "MK", string> = {
-    AL: "Shqiperi",
-    XK: "Kosovë",
-    ME: "Malin e Zi",
-    MK: "Maqedonin e Veriut",
+    AL: tCountriesDownload("AL"),
+    XK: tCountriesDownload("XK"),
+    ME: tCountriesDownload("ME"),
+    MK: tCountriesDownload("MK"),
   };
 
   const getHolidayCount = React.useMemo(() => {
@@ -78,13 +83,7 @@ export function FilterBar({
     const countryHolidays = holidays2026.filter(
       (h) => h.country === country || h.country === "BOTH"
     );
-    const importCountryNames: Record<"AL" | "XK" | "ME" | "MK", string> = {
-      AL: "Shqipëri",
-      XK: "Kosovë",
-      ME: "Mali i Zi",
-      MK: "Maqedonia e Veriut",
-    };
-    downloadBulkIcsFile(countryHolidays, importCountryNames[country]);
+    downloadBulkIcsFile(countryHolidays, downloadButtonCountryNames[country]);
   };
 
   return (
@@ -142,15 +141,19 @@ export function FilterBar({
           )}
           title={
             hasCountrySelected && selectedCountryCode
-              ? `Shkarko festat zyrtare për ${downloadButtonCountryNames[selectedCountryCode]} (.ics)`
-              : "Zgjidhni një shtet për të shkarkuar festat"
+              ? tFilter("downloadTitle", {
+                  country: downloadButtonCountryNames[selectedCountryCode],
+                })
+              : tFilter("selectCountryToDownloadTitle")
           }
         >
           <Download className="w-4 h-4 shrink-0" />
           <span>
             {hasCountrySelected && selectedCountryCode
-              ? `Shkarko festat për ${downloadButtonCountryNames[selectedCountryCode]}`
-              : "Zgjidhni një shtet për të shkarkuar"}
+              ? tFilter("downloadFor", {
+                  country: downloadButtonCountryNames[selectedCountryCode],
+                })
+              : tFilter("selectCountryToDownload")}
           </span>
         </button>
       </div>
@@ -165,7 +168,7 @@ export function FilterBar({
                 ? "bg-background shadow-sm text-foreground"
                 : "text-muted-foreground hover:text-foreground"
             )}
-            aria-label="Calendar View"
+            aria-label={tFilter("calendarView")}
           >
             <Calendar className="h-5 w-5" />
           </button>
@@ -177,12 +180,15 @@ export function FilterBar({
                 ? "bg-background shadow-sm text-foreground"
                 : "text-muted-foreground hover:text-foreground"
             )}
-            aria-label="List View"
+            aria-label={tFilter("listView")}
           >
             <List className="h-5 w-5" />
           </button>
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <LanguageSwitcher />
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );

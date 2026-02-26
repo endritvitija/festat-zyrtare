@@ -1,0 +1,67 @@
+{
+  "common": {
+    "year": "2026",
+    "loading": "Loading...",
+    "all": "All",
+    "weekend": "Weekend",
+    "recommendation": "Holiday recommendation",
+    "recommendationTooltip": "Recommendation to take a day off"
+  },
+  "countries": {
+    "AL": "Albania",
+    "XK": "Kosovo",
+    "ME": "Montenegro",
+    "MK": "North Macedonia",
+    "BOTH": "All"
+  },
+  "countriesDownload": {
+    "AL": "Albania",
+    "XK": "Kosovo",
+    "ME": "Montenegro",
+    "MK": "North Macedonia"
+  },
+  "home": {
+    "title": "Official Holidays",
+    "note": "Note: Dates for Eid al-Fitr and Eid al-Adha may vary according to the lunar calendar."
+  },
+  "footer": {
+    "copyright": "© 2026 Official Holidays. All rights reserved.",
+    "sourceAlbania": "Source for Albania",
+    "sourceKosovo": "Source for Kosovo",
+    "github": "GitHub",
+    "updated": "Updated: 02.01.2026",
+    "subscribeTitle": "Monthly holiday emails",
+    "subscribeDescription": "We'll send you an email at the start of each month with that month's national holidays.",
+    "subscribePlaceholder": "Your email",
+    "subscribeButton": "Subscribe",
+    "subscribeSuccess": "Subscribed! You'll get the {month} holidays by email.",
+    "subscribeError": "Something went wrong. Try again."
+  },
+  "filterBar": {
+    "downloadFor": "Download holidays for {country}",
+    "downloadTitle": "Download official holidays for {country} (.ics)",
+    "selectCountryToDownload": "Select a country to download",
+    "selectCountryToDownloadTitle": "Select a country to download holidays",
+    "calendarView": "Calendar view",
+    "listView": "List view"
+  },
+  "theme": {
+    "light": "Light theme",
+    "dark": "Dark theme"
+  },
+  "weekdaysShort": {
+    "0": "Mon",
+    "1": "Tue",
+    "2": "Wed",
+    "3": "Thu",
+    "4": "Fri",
+    "5": "Sat",
+    "6": "Sun"
+  },
+  "metadata": {
+    "title": "Official Holidays 2026 - Albania & Kosovo",
+    "titleTemplate": "%s | Official Holidays",
+    "description": "Full calendar of official holidays for Albania and Kosovo for 2026. Plan your time off with ease.",
+    "siteName": "Official Holidays"
+  }
+}

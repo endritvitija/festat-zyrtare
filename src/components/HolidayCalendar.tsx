@@ -1,23 +1,26 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { 
-  format, 
-  startOfMonth, 
-  endOfMonth, 
-  startOfWeek, 
-  endOfWeek, 
-  eachDayOfInterval, 
-  isSameMonth, 
-  isSameDay, 
+import * as React from "react";
+import {
+  format,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
   isWeekend,
   eachMonthOfInterval,
   startOfYear,
-  endOfYear
-} from "date-fns"
-import { sq } from "date-fns/locale"
-import { Holiday, Country } from "@/types"
-import { cn } from "@/lib/utils"
+  endOfYear,
+} from "date-fns";
+import { sq, enUS, de } from "date-fns/locale";
+import { useLocale, useTranslations } from "next-intl";
+import { Holiday, Country } from "@/types";
+import { cn } from "@/lib/utils";
+
+const dateFnsLocaleMap = { sq, en: enUS, de } as const;
 
 interface HolidayCalendarProps {
   holidays: Holiday[]
@@ -25,20 +28,35 @@ interface HolidayCalendarProps {
 }
 
 export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProps) {
+  const locale = useLocale() as "sq" | "en" | "de";
+  const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
+  const tCountries = useTranslations("countries");
+  const tCommon = useTranslations("common");
+  const tWd = useTranslations("weekdaysShort");
+  const weekdaysShort = [
+    tWd("0"),
+    tWd("1"),
+    tWd("2"),
+    tWd("3"),
+    tWd("4"),
+    tWd("5"),
+    tWd("6"),
+  ];
+
   const countryFlags: Record<Country, string> = {
-    AL: '🇦🇱',
-    XK: '🇽🇰',
-    ME: '🇲🇪',
-    MK: '🇲🇰',
-    BOTH: '🌍',
+    AL: "🇦🇱",
+    XK: "🇽🇰",
+    ME: "🇲🇪",
+    MK: "🇲🇰",
+    BOTH: "🌍",
   };
 
   const countryNames: Record<Country, string> = {
-    AL: 'Shqipëri',
-    XK: 'Kosovë',
-    ME: 'Mali i Zi',
-    MK: 'Maqedonia e Veriut',
-    BOTH: 'Të gjitha',
+    AL: tCountries("AL"),
+    XK: tCountries("XK"),
+    ME: tCountries("ME"),
+    MK: tCountries("MK"),
+    BOTH: tCountries("BOTH"),
   };
 
   const getDisplayCountry = (holiday: Holiday): string => {
@@ -145,16 +163,18 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
             className="w-full"
           >
             <h3 className="text-xl font-bold capitalize text-foreground py-4 px-4 sticky top-[180px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm">
-              {format(month, 'MMMM', { locale: sq })}
+              {format(month, "MMMM", { locale: dateFnsLocale })}
             </h3>
 
             <div className="grid grid-cols-7 text-sm sticky top-[240px] sm:top-[132px] z-30 bg-background/95 backdrop-blur-sm py-2 px-4 border-b-2 border-border/50">
-              {['Hën', 'Mar', 'Mër', 'Enj', 'Pre', 'Sht', 'Die'].map(day => (
-                <div 
-                  key={day} 
+              {weekdaysShort.map((day) => (
+                <div
+                  key={day}
                   className={cn(
                     "font-medium py-1",
-                    (day === 'Sht' || day === 'Die') ? "text-red-500 dark:text-red-400" : "text-muted-foreground"
+                    ["Sht", "Die", "Sat", "Sun", "Sa", "So"].includes(day)
+                      ? "text-red-500 dark:text-red-400"
+                      : "text-muted-foreground"
                   )}
                 >
                   {day}
@@ -302,7 +322,7 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                           day.getDay() === 0 ? "right-0 translate-x-0" :
                           "left-1/2 -translate-x-1/2"
                         )}>
-                          Rekomandim për të marrë një ditë pushimi
+                          {tCommon("recommendationTooltip")}
                           <div className={cn(
                             "absolute top-full border-4 border-transparent border-t-yellow-100 dark:border-t-yellow-900 ml-[-1px] mt-[-1px]",
                             day.getDay() === 1 ? "left-4" :

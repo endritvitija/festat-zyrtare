@@ -1,0 +1,67 @@
+{
+  "common": {
+    "year": "2026",
+    "loading": "Laden...",
+    "all": "Alle",
+    "weekend": "Wochenende",
+    "recommendation": "Urlaubsempfehlung",
+    "recommendationTooltip": "Empfehlung, einen Urlaubstag zu nehmen"
+  },
+  "countries": {
+    "AL": "Albanien",
+    "XK": "Kosovo",
+    "ME": "Montenegro",
+    "MK": "Nordmazedonien",
+    "BOTH": "Alle"
+  },
+  "countriesDownload": {
+    "AL": "Albanien",
+    "XK": "Kosovo",
+    "ME": "Montenegro",
+    "MK": "Nordmazedonien"
+  },
+  "home": {
+    "title": "Feiertage",
+    "note": "Hinweis: Die Daten für Eid al-Fitr und Eid al-Adha können je nach Mondkalender variieren."
+  },
+  "footer": {
+    "copyright": "© 2026 Feiertage. Alle Rechte vorbehalten.",
+    "sourceAlbania": "Quelle für Albanien",
+    "sourceKosovo": "Quelle für Kosovo",
+    "github": "GitHub",
+    "updated": "Aktualisiert: 02.01.2026",
+    "subscribeTitle": "Monatliche Feiertags-E-Mails",
+    "subscribeDescription": "Wir schicken Ihnen zu Beginn jedes Monats eine E-Mail mit den Feiertagen dieses Monats.",
+    "subscribePlaceholder": "Ihre E-Mail",
+    "subscribeButton": "Abonnieren",
+    "subscribeSuccess": "Abonniert! Sie erhalten die Feiertage für {month} per E-Mail.",
+    "subscribeError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+  },
+  "filterBar": {
+    "downloadFor": "Feiertage für {country} herunterladen",
+    "downloadTitle": "Feiertage für {country} herunterladen (.ics)",
+    "selectCountryToDownload": "Land zum Herunterladen wählen",
+    "selectCountryToDownloadTitle": "Wählen Sie ein Land, um die Feiertage herunterzuladen",
+    "calendarView": "Kalenderansicht",
+    "listView": "Listenansicht"
+  },
+  "theme": {
+    "light": "Hell",
+    "dark": "Dunkel"
+  },
+  "weekdaysShort": {
+    "0": "Mo",
+    "1": "Di",
+    "2": "Mi",
+    "3": "Do",
+    "4": "Fr",
+    "5": "Sa",
+    "6": "So"
+  },
+  "metadata": {
+    "title": "Feiertage 2026 - Albanien & Kosovo",
+    "titleTemplate": "%s | Feiertage",
+    "description": "Vollständiger Kalender der Feiertage für Albanien und Kosovo 2026. Planen Sie Ihren Urlaub einfach.",
+    "siteName": "Feiertage"
+  }
+}
