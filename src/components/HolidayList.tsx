@@ -113,10 +113,23 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
     return groups;
   }, [filteredHolidays]);
 
+  const listContainerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const currentMonthIndex = new Date().getMonth();
+    const el = listContainerRef.current?.querySelector(
+      `[data-month-index="${currentMonthIndex}"]`
+    ) as HTMLElement | null;
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
   return (
-    <div className="space-y-12 max-w-1xl mx-auto">
-      {Object.entries(groupedHolidays).map(([month, monthHolidays]) => (
-        <div key={month}>
+    <div ref={listContainerRef} className="space-y-12 max-w-1xl mx-auto">
+      {Object.entries(groupedHolidays).map(([month, monthHolidays]) => {
+        const firstDate = parseISO(monthHolidays[0].date);
+        const monthIndex = firstDate.getMonth();
+        return (
+        <div key={month} data-month-index={monthIndex}>
           <h3 className="text-xl font-bold capitalize text-foreground px-4 py-4 sticky top-[180px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm border-b-2 border-border/50">
             {month}
           </h3>
@@ -130,7 +143,8 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
             ))}
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

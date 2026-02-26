@@ -57,6 +57,17 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
     return eachMonthOfInterval({ start: startDate, end: endDate })
   }, [startDate, endDate])
 
+  const calendarContainerRef = React.useRef<HTMLDivElement>(null)
+
+  // Scroll to current month on open
+  React.useEffect(() => {
+    const scrollToMonthId = `${year}-${format(new Date(), "MM")}`
+    const el = calendarContainerRef.current?.querySelector(
+      `[data-month="${scrollToMonthId}"]`
+    ) as HTMLElement | null
+    el?.scrollIntoView({ behavior: "smooth", block: "start" })
+  }, [])
+
   // Close tooltip when clicking outside
   React.useEffect(() => {
     const handleClickOutside = (e: MouseEvent | TouchEvent) => {
@@ -121,14 +132,18 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
   }
 
   return (
-    <div className="space-y-12 max-w-1xl mx-auto">
+    <div ref={calendarContainerRef} className="space-y-12 max-w-1xl mx-auto">
       {months.map((month) => {
         const monthStart = startOfWeek(startOfMonth(month), { weekStartsOn: 1 })
         const monthEnd = endOfWeek(endOfMonth(month), { weekStartsOn: 1 })
         const days = eachDayOfInterval({ start: monthStart, end: monthEnd })
 
         return (
-          <div key={month.toString()} className="w-full">
+          <div
+            key={month.toString()}
+            data-month={format(month, "yyyy-MM")}
+            className="w-full"
+          >
             <h3 className="text-xl font-bold capitalize text-foreground py-4 px-4 sticky top-[180px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm">
               {format(month, 'MMMM', { locale: sq })}
             </h3>
