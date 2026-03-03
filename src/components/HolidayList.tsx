@@ -4,58 +4,42 @@ import * as React from "react";
 import { format, parseISO, isWeekend } from "date-fns";
 import { sq, enUS, de } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
-import { Holiday, Country } from "@/types";
+import { Holiday, SingleCountry } from "@/types";
 import { cn } from "@/lib/utils";
 
 const dateFnsLocaleMap = { sq, en: enUS, de } as const;
 
 interface HolidayListProps {
   holidays: Holiday[];
-  countryFilter: Country;
+  countryFilter: SingleCountry;
 }
 
-function HolidayListItem({ holiday, countryFilter }: { holiday: Holiday; countryFilter: Country }) {
+function HolidayListItem({ holiday, countryFilter }: { holiday: Holiday; countryFilter: SingleCountry }) {
   const date = parseISO(holiday.date);
   const isWknd = isWeekend(date);
   const locale = useLocale() as "sq" | "en" | "de";
   const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
   const tCountries = useTranslations("countries");
 
-  const countryNames: Record<Country, string> = {
+  const countryNames: Record<SingleCountry, string> = {
     AL: tCountries("AL"),
     XK: tCountries("XK"),
     ME: tCountries("ME"),
     MK: tCountries("MK"),
-    BOTH: tCountries("BOTH"),
   };
 
-  const countryFlags: Record<Country, string> = {
+  const countryFlags: Record<SingleCountry, string> = {
     AL: '🇦🇱',
     XK: '🇽🇰',
     ME: '🇲🇪',
     MK: '🇲🇰',
-    BOTH: '🌍',
   };
 
   const getDisplayFlags = () => {
-    if (holiday.country === 'BOTH') {
-      if (countryFilter === 'BOTH') {
-        return (
-          <span className="text-xs text-muted-foreground flex items-center gap-1">
-            🇦🇱 🇽🇰 🇲🇪 🇲🇰 {countryNames['BOTH']}
-          </span>
-        );
-      } else {
-        return (
-          <span className="text-xs text-muted-foreground flex items-center gap-1">
-            {countryFlags[countryFilter]} {countryNames[countryFilter]}
-          </span>
-        );
-      }
-    }
+    const displayCountry = holiday.country === 'BOTH' ? countryFilter : holiday.country;
     return (
       <span className="text-xs text-muted-foreground flex items-center gap-1">
-        {countryFlags[holiday.country]} {countryNames[holiday.country]}
+        {countryFlags[displayCountry]} {countryNames[displayCountry]}
       </span>
     );
   };
@@ -103,10 +87,7 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
 
   const filteredHolidays = React.useMemo(() => {
     return holidays.filter(
-      (h) =>
-        countryFilter === "BOTH" ||
-        h.country === "BOTH" ||
-        h.country === countryFilter
+      (h) => h.country === "BOTH" || h.country === countryFilter
     );
   }, [holidays, countryFilter]);
 

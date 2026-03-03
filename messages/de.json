@@ -38,7 +38,7 @@
     "subscribeError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
   },
   "filterBar": {
-    "downloadFor": "Feiertage für {country} herunterladen",
+    "downloadFor": "Für Kalender herunterladen",
     "downloadTitle": "Feiertage für {country} herunterladen (.ics)",
     "selectCountryToDownload": "Land zum Herunterladen wählen",
     "selectCountryToDownloadTitle": "Wählen Sie ein Land, um die Feiertage herunterzuladen",

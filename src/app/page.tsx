@@ -9,8 +9,44 @@ import { HolidayCalendar } from "@/components/HolidayCalendar";
 import { HolidayList } from "@/components/HolidayList";
 import { SubscribeSection } from "@/components/SubscribeSection";
 import { holidays2026 } from "@/data/holidays";
-import { Country } from "@/types";
+import { SingleCountry } from "@/types";
 import { GitBranch } from "lucide-react";
+
+const DEFAULT_COUNTRY: SingleCountry = "XK";
+
+const TIMEZONE_TO_COUNTRY: Record<string, SingleCountry> = {
+  "Europe/Tirane": "AL",
+  "Europe/Podgorica": "ME",
+  "Europe/Skopje": "MK",
+};
+
+function detectCountryFromTimezone(): SingleCountry | null {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return TIMEZONE_TO_COUNTRY[tz] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+async function detectCountryFromIP(): Promise<SingleCountry | null> {
+  try {
+    const response = await fetch("https://ipapi.co/country_code/", {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!response.ok) return null;
+    const code = (await response.text()).trim().toUpperCase();
+    const supported: Record<string, SingleCountry> = {
+      AL: "AL",
+      XK: "XK",
+      ME: "ME",
+      MK: "MK",
+    };
+    return supported[code] ?? null;
+  } catch {
+    return null;
+  }
+}
 
 function HomeContent() {
   const searchParams = useSearchParams();
@@ -21,19 +57,34 @@ function HomeContent() {
   const tHome = useTranslations("home");
   const tFooter = useTranslations("footer");
 
-  const [countryFilter, setCountryFilter] = React.useState<Country>(() => {
+  const hasCountryParam = searchParams.has("country");
+
+  const [countryFilter, setCountryFilter] = React.useState<SingleCountry>(() => {
     const country = searchParams.get("country");
     if (
       country === "AL" ||
       country === "XK" ||
       country === "ME" ||
-      country === "MK" ||
-      country === "BOTH"
+      country === "MK"
     ) {
-      return country as Country;
+      return country;
     }
-    return "BOTH";
+    return DEFAULT_COUNTRY;
   });
+
+  React.useEffect(() => {
+    if (hasCountryParam) return;
+
+    const tzCountry = detectCountryFromTimezone();
+    if (tzCountry) {
+      setCountryFilter(tzCountry);
+      return;
+    }
+
+    detectCountryFromIP().then((ipCountry) => {
+      if (ipCountry) setCountryFilter(ipCountry);
+    });
+  }, [hasCountryParam]);
 
   const [view, setView] = React.useState<"CALENDAR" | "LIST">(() => {
     const v = searchParams.get("view");
@@ -47,11 +98,7 @@ function HomeContent() {
     const currentQuery = searchParams.toString();
     const params = new URLSearchParams(currentQuery);
 
-    if (countryFilter === "BOTH") {
-      params.delete("country");
-    } else {
-      params.set("country", countryFilter);
-    }
+    params.set("country", countryFilter);
 
     if (view === "CALENDAR") {
       params.delete("view");
@@ -94,13 +141,6 @@ function HomeContent() {
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
                 {tCountries("MK")}
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="flex gap-0.5">
-                  <span className="w-2.5 h-2.5 rounded-l-full bg-red-500"></span>
-                  <span className="w-2.5 h-2.5 rounded-r-full bg-blue-500"></span>
-                </div>
-                {tCountries("BOTH")}
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30"></span>

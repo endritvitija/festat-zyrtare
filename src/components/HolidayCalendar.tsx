@@ -17,14 +17,14 @@ import {
 } from "date-fns";
 import { sq, enUS, de } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
-import { Holiday, Country } from "@/types";
+import { Holiday, SingleCountry } from "@/types";
 import { cn } from "@/lib/utils";
 
 const dateFnsLocaleMap = { sq, en: enUS, de } as const;
 
 interface HolidayCalendarProps {
   holidays: Holiday[]
-  countryFilter: Country
+  countryFilter: SingleCountry
 }
 
 export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProps) {
@@ -43,25 +43,23 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
     tWd("6"),
   ];
 
-  const countryFlags: Record<Country, string> = {
+  const countryFlags: Record<SingleCountry, string> = {
     AL: "🇦🇱",
     XK: "🇽🇰",
     ME: "🇲🇪",
     MK: "🇲🇰",
-    BOTH: "🌍",
   };
 
-  const countryNames: Record<Country, string> = {
+  const countryNames: Record<SingleCountry, string> = {
     AL: tCountries("AL"),
     XK: tCountries("XK"),
     ME: tCountries("ME"),
     MK: tCountries("MK"),
-    BOTH: tCountries("BOTH"),
   };
 
   const getDisplayCountry = (holiday: Holiday): string => {
     if (holiday.country === 'BOTH') {
-      return countryFilter === 'BOTH' ? countryNames['BOTH'] : countryNames[countryFilter];
+      return countryNames[countryFilter];
     }
     return countryNames[holiday.country];
   };
@@ -106,7 +104,7 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
 
   const filteredHolidays = React.useMemo(() => {
     return holidays.filter(h => 
-      countryFilter === 'BOTH' || h.country === 'BOTH' || h.country === countryFilter
+      h.country === 'BOTH' || h.country === countryFilter
     )
   }, [holidays, countryFilter])
 
@@ -117,7 +115,7 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
     const isNonWorkingDay = (date: Date) => {
       const dateStr = format(date, 'yyyy-MM-dd')
       const isWknd = isWeekend(date)
-      const isHoliday = holidays.some(h => h.date === dateStr && (countryFilter === 'BOTH' || h.country === 'BOTH' || h.country === countryFilter))
+      const isHoliday = holidays.some(h => h.date === dateStr && (h.country === 'BOTH' || h.country === countryFilter))
       return isWknd || isHoliday
     }
 
@@ -230,58 +228,23 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
                     {holiday && (
                       <div className="flex flex-col gap-1">
                         <div className="flex gap-1 items-center">
-                          {holiday.country === 'BOTH' ? (
-                            countryFilter === 'BOTH' ? (
+                          {(() => {
+                            const displayCountry = holiday.country === 'BOTH' ? countryFilter : holiday.country;
+                            return (
                               <>
-                                {/* Mobile: multi-colored pill icon */}
-                                <div className="flex items-center sm:hidden">
-                                  <div className="w-4 h-2 rounded-full flex overflow-hidden shadow-sm">
-                                    <div className="w-1/4 bg-red-500"></div>
-                                    <div className="w-1/4 bg-blue-500"></div>
-                                    <div className="w-1/4 bg-green-500"></div>
-                                    <div className="w-1/4 bg-purple-500"></div>
-                                  </div>
-                                </div>
-                                {/* Desktop: all flags */}
-                                <div className="hidden sm:flex gap-0.5">
-                                  <span className="text-base leading-none">{countryFlags['AL']}</span>
-                                  <span className="text-base leading-none">{countryFlags['XK']}</span>
-                                  <span className="text-base leading-none">{countryFlags['ME']}</span>
-                                  <span className="text-base leading-none">{countryFlags['MK']}</span>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                {/* Mobile: single colored pill */}
                                 <div className="flex items-center sm:hidden">
                                   <div className={cn(
                                     "w-4 h-2 rounded-full shadow-sm",
-                                    countryFilter === 'AL' && "bg-red-500",
-                                    countryFilter === 'XK' && "bg-blue-500",
-                                    countryFilter === 'ME' && "bg-green-500",
-                                    countryFilter === 'MK' && "bg-purple-500"
+                                    displayCountry === 'AL' && "bg-red-500",
+                                    displayCountry === 'XK' && "bg-blue-500",
+                                    displayCountry === 'ME' && "bg-green-500",
+                                    displayCountry === 'MK' && "bg-purple-500"
                                   )}></div>
                                 </div>
-                                {/* Desktop: flag */}
-                                <span className="hidden sm:inline text-base leading-none">{countryFlags[countryFilter]}</span>
+                                <span className="hidden sm:inline text-base leading-none">{countryFlags[displayCountry]}</span>
                               </>
-                            )
-                          ) : (
-                            <>
-                              {/* Mobile: single colored pill */}
-                              <div className="flex items-center sm:hidden">
-                                <div className={cn(
-                                  "w-4 h-2 rounded-full shadow-sm",
-                                  holiday.country === 'AL' && "bg-red-500",
-                                  holiday.country === 'XK' && "bg-blue-500",
-                                  holiday.country === 'ME' && "bg-green-500",
-                                  holiday.country === 'MK' && "bg-purple-500"
-                                )}></div>
-                              </div>
-                              {/* Desktop: flag */}
-                              <span className="hidden sm:inline text-base leading-none">{countryFlags[holiday.country]}</span>
-                            </>
-                          )}
+                            );
+                          })()}
                         </div>
                         <span className="text-[10px] leading-tight font-medium text-muted-foreground line-clamp-2 hidden sm:block">
                           {holiday.name}

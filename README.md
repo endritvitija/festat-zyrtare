@@ -1,4 +1,4 @@
-# Festat Zyrtare - Shqipëri & Kosovë 🇦🇱 🇽🇰
+# Festat Zyrtare - në ballkanin perendimor 🇦🇱 🇽🇰
 
 A modern, responsive web application that displays the official holidays for Albania and Kosovo for the year 2026. Built with Next.js and Tailwind CSS.
 

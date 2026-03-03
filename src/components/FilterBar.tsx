@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Calendar, List, Download, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Country } from "@/types";
+import { SingleCountry } from "@/types";
 import { cn } from "@/lib/utils";
 import { downloadBulkIcsFile } from "@/lib/calendar";
 import { holidays2026 } from "@/data/holidays";
@@ -12,9 +12,9 @@ import { ThemeToggle } from "./ThemeToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 interface FilterBarProps {
-  countryFilter: Country;
+  countryFilter: SingleCountry;
   view: "CALENDAR" | "LIST";
-  onCountryChange: (country: Country) => void;
+  onCountryChange: (country: SingleCountry) => void;
   onViewChange: (view: "CALENDAR" | "LIST") => void;
 }
 
@@ -30,18 +30,16 @@ export function FilterBar({
   const tCountries = useTranslations("countries");
   const tCountriesDownload = useTranslations("countriesDownload");
 
-  const hasCountrySelected = countryFilter !== "BOTH";
-  const selectedCountryCode = hasCountrySelected ? countryFilter : null;
+  const countries: SingleCountry[] = ["AL", "XK", "ME", "MK"];
 
-  const countryNames: Record<Country, string> = {
-    BOTH: tCountries("BOTH"),
+  const countryNames: Record<SingleCountry, string> = {
     AL: tCountries("AL"),
     XK: tCountries("XK"),
     ME: tCountries("ME"),
     MK: tCountries("MK"),
   };
 
-  const downloadButtonCountryNames: Record<"AL" | "XK" | "ME" | "MK", string> = {
+  const downloadButtonCountryNames: Record<SingleCountry, string> = {
     AL: tCountriesDownload("AL"),
     XK: tCountriesDownload("XK"),
     ME: tCountriesDownload("ME"),
@@ -49,15 +47,13 @@ export function FilterBar({
   };
 
   const getHolidayCount = React.useMemo(() => {
-    // Filter out holidays with "(Pushim)" or "(Dita e dytë)" in their names - these are not real holidays
     const realHolidays = holidays2026.filter(
       holiday => 
         !holiday.name.includes('(Pushim)') && 
         !holiday.name.includes('(Dita e dytë)')
     );
 
-    const counts: Record<Country, number> = {
-      BOTH: realHolidays.length,
+    const counts: Record<SingleCountry, number> = {
       AL: realHolidays.filter(h => h.country === 'AL' || h.country === 'BOTH').length,
       XK: realHolidays.filter(h => h.country === 'XK' || h.country === 'BOTH').length,
       ME: realHolidays.filter(h => h.country === 'ME' || h.country === 'BOTH').length,
@@ -79,7 +75,7 @@ export function FilterBar({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleBulkImport = (country: "AL" | "XK" | "ME" | "MK") => {
+  const handleBulkImport = (country: SingleCountry) => {
     const countryHolidays = holidays2026.filter(
       (h) => h.country === country || h.country === "BOTH"
     );
@@ -105,7 +101,7 @@ export function FilterBar({
 
           {isCountryMenuOpen && (
             <div className="absolute left-0 mt-2 w-full sm:w-56 rounded-md shadow-lg bg-popover border border-border z-50 py-1 animate-in fade-in zoom-in-95 duration-100">
-              {(Object.keys(countryNames) as Country[]).map((country) => (
+              {countries.map((country) => (
                 <button
                   key={country}
                   onClick={() => {
@@ -129,31 +125,17 @@ export function FilterBar({
 
         <button
           type="button"
-          disabled={!hasCountrySelected}
-          onClick={() =>
-            selectedCountryCode && handleBulkImport(selectedCountryCode)
-          }
-          className={cn(
-            "flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border w-full sm:w-auto",
-            hasCountrySelected
-              ? "bg-secondary/50 hover:bg-secondary text-foreground border-transparent hover:border-border cursor-pointer"
-              : "bg-secondary/30 text-muted-foreground border-transparent cursor-not-allowed"
-          )}
-          title={
-            hasCountrySelected && selectedCountryCode
-              ? tFilter("downloadTitle", {
-                  country: downloadButtonCountryNames[selectedCountryCode],
-                })
-              : tFilter("selectCountryToDownloadTitle")
-          }
+          onClick={() => handleBulkImport(countryFilter)}
+          className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border w-full sm:w-auto bg-secondary/50 hover:bg-secondary text-foreground border-transparent hover:border-border cursor-pointer"
+          title={tFilter("downloadTitle", {
+            country: downloadButtonCountryNames[countryFilter],
+          })}
         >
           <Download className="w-4 h-4 shrink-0" />
           <span>
-            {hasCountrySelected && selectedCountryCode
-              ? tFilter("downloadFor", {
-                  country: downloadButtonCountryNames[selectedCountryCode],
-                })
-              : tFilter("selectCountryToDownload")}
+            {tFilter("downloadFor", {
+              country: downloadButtonCountryNames[countryFilter],
+            })}
           </span>
         </button>
       </div>

@@ -38,7 +38,7 @@
     "subscribeError": "Something went wrong. Try again."
   },
   "filterBar": {
-    "downloadFor": "Download holidays for {country}",
+    "downloadFor": "Download for calendar",
     "downloadTitle": "Download official holidays for {country} (.ics)",
     "selectCountryToDownload": "Select a country to download",
     "selectCountryToDownloadTitle": "Select a country to download holidays",

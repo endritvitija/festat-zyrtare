@@ -38,7 +38,7 @@
     "subscribeError": "Diçka shkoi keq. Provoni përsëri."
   },
   "filterBar": {
-    "downloadFor": "Shkarko festat për {country}",
+    "downloadFor": "Shkarko për kalendar",
     "downloadTitle": "Shkarko festat zyrtare për {country} (.ics)",
     "selectCountryToDownload": "Zgjidhni një shtet për të shkarkuar",
     "selectCountryToDownloadTitle": "Zgjidhni një shtet për të shkarkuar festat",
@@ -59,9 +59,9 @@
     "6": "Die"
   },
   "metadata": {
-    "title": "Festat Zyrtare 2026 - Shqipëri & Kosovë",
+    "title": "Festat Zyrtare 2026 - në ballkanin perendimor",
     "titleTemplate": "%s | Festat Zyrtare",
-    "description": "Kalendari i plotë i festave zyrtare për Shqipërinë dhe Kosovën për vitin 2026. Planifikoni pushimet tuaja me lehtësi.",
+    "description": "Kalendari i plotë i festave zyrtare për ballkanin perendimor për vitin 2026. Planifikoni pushimet tuaja me lehtësi.",
     "siteName": "Festat Zyrtare"
   }
 }
