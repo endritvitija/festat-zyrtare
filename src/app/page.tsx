@@ -7,8 +7,7 @@ import { useTranslations } from "next-intl";
 import { FilterBar } from "@/components/FilterBar";
 import { HolidayCalendar } from "@/components/HolidayCalendar";
 import { HolidayList } from "@/components/HolidayList";
-import { SubscribeSection } from "@/components/SubscribeSection";
-import { holidays2026 } from "@/data/holidays";
+import { getHolidayYear, getHolidaysForYear } from "@/data/holidays";
 import { SingleCountry } from "@/types";
 import { GitBranch } from "lucide-react";
 
@@ -56,6 +55,9 @@ function HomeContent() {
   const tCountries = useTranslations("countries");
   const tHome = useTranslations("home");
   const tFooter = useTranslations("footer");
+
+  const year = getHolidayYear();
+  const holidays = React.useMemo(() => getHolidaysForYear(year), [year]);
 
   const hasCountryParam = searchParams.has("country");
 
@@ -119,7 +121,7 @@ function HomeContent() {
         <div className="max-w-5xl mx-auto">
           <div className="flex flex-col items-start text-left mb-12 space-y-6 px-4 sm:px-0">
             <span className="px-4 py-1.5 rounded-full border border-border text-muted-foreground text-sm font-medium">
-              {tCommon("year")}
+              {tCommon("year", { year })}
             </span>
             <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1]">
               {tHome("title")}
@@ -156,6 +158,7 @@ function HomeContent() {
           <FilterBar
             countryFilter={countryFilter}
             view={view}
+            holidays={holidays}
             onCountryChange={setCountryFilter}
             onViewChange={setView}
           />
@@ -163,12 +166,13 @@ function HomeContent() {
           <div className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             {view === "CALENDAR" ? (
               <HolidayCalendar
-                holidays={holidays2026}
+                holidays={holidays}
+                year={year}
                 countryFilter={countryFilter}
               />
             ) : (
               <HolidayList
-                holidays={holidays2026}
+                holidays={holidays}
                 countryFilter={countryFilter}
               />
             )}
@@ -184,10 +188,10 @@ function HomeContent() {
       <footer className="border-t border-border mt-12 py-8 text-center text-sm text-muted-foreground px-4">
         <div className="flex flex-col items-center gap-4">
           {/* <SubscribeSection /> */}
-          <p>{tFooter("copyright")}</p>
+          <p>{tFooter("copyright", { year })}</p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs">
             <a
-              href="https://www.bankofalbania.org/Shtypi/Kalendari_i_festave_zyrtare_2026/"
+              href={`https://www.bankofalbania.org/Shtypi/Kalendari_i_festave_zyrtare_${year}/`}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-foreground transition-colors flex items-center gap-1"
@@ -214,7 +218,9 @@ function HomeContent() {
               {tFooter("github")}
             </a>
           </div>
-          <p className="text-xs text-muted-foreground/60">{tFooter("updated")}</p>
+          <p className="text-xs text-muted-foreground/60">
+            {tFooter("updated", { year })}
+          </p>
         </div>
       </footer>
     </div>

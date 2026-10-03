@@ -1,6 +1,6 @@
 {
   "common": {
-    "year": "2026",
+    "year": "{year}",
     "loading": "Loading...",
     "all": "All",
     "weekend": "Weekend",
@@ -25,11 +25,11 @@
     "note": "Note: Dates for Eid al-Fitr and Eid al-Adha may vary according to the lunar calendar."
   },
   "footer": {
-    "copyright": "© 2026 Official Holidays. All rights reserved.",
+    "copyright": "© {year} Official Holidays. All rights reserved.",
     "sourceAlbania": "Source for Albania",
     "sourceKosovo": "Source for Kosovo",
     "github": "GitHub",
-    "updated": "Updated: 02.01.2026",
+    "updated": "Calendar for {year}",
     "subscribeTitle": "Monthly holiday emails",
     "subscribeDescription": "We'll send you an email at the start of each month with that month's national holidays.",
     "subscribePlaceholder": "Your email",
@@ -59,9 +59,9 @@
     "6": "Sun"
   },
   "metadata": {
-    "title": "Official Holidays 2026 - Albania & Kosovo",
+    "title": "Official Holidays {year} - Western Balkans",
     "titleTemplate": "%s | Official Holidays",
-    "description": "Full calendar of official holidays for Albania and Kosovo for 2026. Plan your time off with ease.",
+    "description": "Full calendar of official holidays for the Western Balkans for {year}. Plan your time off with ease.",
     "siteName": "Official Holidays"
   }
 }

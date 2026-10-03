@@ -17,8 +17,9 @@ const poppins = Poppins({
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   const t = await getTranslations({ locale, namespace: "metadata" });
-  const title = t("title");
-  const description = t("description");
+  const year = new Date().getFullYear();
+  const title = t("title", { year });
+  const description = t("description", { year });
   const siteName = t("siteName");
   const template = t("titleTemplate");
   return {
@@ -27,8 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
     description,
     keywords: [
       "festat zyrtare",
-      "festat zyrtare 2026",
-      "kalendari 2026",
+      `festat zyrtare ${year}`,
+      `kalendari ${year}`,
       "pushime Shqiperi",
       "pushime Kosove",
       "Albania holidays",

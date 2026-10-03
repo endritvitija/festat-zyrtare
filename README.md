@@ -1,6 +1,6 @@
 # Festat Zyrtare - në ballkanin perendimor 🇦🇱 🇽🇰
 
-A modern, responsive web application that displays the official holidays for Albania and Kosovo for the year 2026. Built with Next.js and Tailwind CSS.
+A modern, responsive web application that displays the official holidays for Albania, Kosovo, Montenegro, and North Macedonia. Holiday dates are generated dynamically for the current year. Built with Next.js and Tailwind CSS.
 
 ## 🚀 Features
 
@@ -40,7 +40,7 @@ src/
 │   ├── ThemeToggle.tsx     # Dark/Light mode switch
 │   └── providers/          # Context providers (ThemeProvider)
 ├── data/
-│   └── holidays.ts         # Static holiday data for 2026
+│   └── holidays.ts         # Dynamic holiday generator (current year)
 ├── lib/
 │   └── utils.ts            # Utility functions (cn class merger)
 └── types/

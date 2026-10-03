@@ -3,10 +3,9 @@
 import * as React from "react";
 import { Calendar, List, Download, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { SingleCountry } from "@/types";
+import { Holiday, SingleCountry } from "@/types";
 import { cn } from "@/lib/utils";
 import { downloadBulkIcsFile } from "@/lib/calendar";
-import { holidays2026 } from "@/data/holidays";
 
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -14,6 +13,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 interface FilterBarProps {
   countryFilter: SingleCountry;
   view: "CALENDAR" | "LIST";
+  holidays: Holiday[];
   onCountryChange: (country: SingleCountry) => void;
   onViewChange: (view: "CALENDAR" | "LIST") => void;
 }
@@ -21,6 +21,7 @@ interface FilterBarProps {
 export function FilterBar({
   countryFilter,
   view,
+  holidays,
   onCountryChange,
   onViewChange,
 }: FilterBarProps) {
@@ -47,7 +48,7 @@ export function FilterBar({
   };
 
   const getHolidayCount = React.useMemo(() => {
-    const realHolidays = holidays2026.filter(
+    const realHolidays = holidays.filter(
       holiday => 
         !holiday.name.includes('(Pushim)') && 
         !holiday.name.includes('(Dita e dytë)')
@@ -60,7 +61,7 @@ export function FilterBar({
       MK: realHolidays.filter(h => h.country === 'MK' || h.country === 'BOTH').length,
     };
     return counts;
-  }, []);
+  }, [holidays]);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -76,7 +77,7 @@ export function FilterBar({
   }, []);
 
   const handleBulkImport = (country: SingleCountry) => {
-    const countryHolidays = holidays2026.filter(
+    const countryHolidays = holidays.filter(
       (h) => h.country === country || h.country === "BOTH"
     );
     downloadBulkIcsFile(countryHolidays, downloadButtonCountryNames[country]);
