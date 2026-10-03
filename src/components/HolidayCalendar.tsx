@@ -24,10 +24,11 @@ const dateFnsLocaleMap = { sq, en: enUS, de } as const;
 
 interface HolidayCalendarProps {
   holidays: Holiday[]
+  year: number
   countryFilter: SingleCountry
 }
 
-export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProps) {
+export function HolidayCalendar({ holidays, year, countryFilter }: HolidayCalendarProps) {
   const locale = useLocale() as "sq" | "en" | "de";
   const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
   const tCountries = useTranslations("countries");
@@ -64,7 +65,6 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
     return countryNames[holiday.country];
   };
   
-  const year = 2026
   const startDate = startOfYear(new Date(year, 0, 1))
   const endDate = endOfYear(new Date(year, 0, 1))
   const [activeDate, setActiveDate] = React.useState<string | null>(null)
@@ -82,7 +82,7 @@ export function HolidayCalendar({ holidays, countryFilter }: HolidayCalendarProp
       `[data-month="${scrollToMonthId}"]`
     ) as HTMLElement | null
     el?.scrollIntoView({ behavior: "smooth", block: "start" })
-  }, [])
+  }, [year])
 
   // Close tooltip when clicking outside
   React.useEffect(() => {
