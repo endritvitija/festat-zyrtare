@@ -4,9 +4,9 @@ import * as React from "react";
 import {
   format,
   parseISO,
-  isWeekend,
   differenceInCalendarDays,
   startOfDay,
+  isSameDay,
 } from "date-fns";
 import { sq, enUS, de } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
@@ -39,139 +39,65 @@ function useToday(): Date | null {
   return today;
 }
 
-function RelativeLabel({ days }: { days: number }) {
-  const t = useTranslations("list");
-  if (days === 0) {
-    return (
-      <span className="shrink-0 rounded-full bg-orange-500 px-2 py-0.5 text-xs font-semibold text-white">
-        {t("today")}
-      </span>
-    );
-  }
-  return (
-    <span className="shrink-0 text-xs font-medium text-muted-foreground tabular-nums">
-      {days === 1 ? t("tomorrow") : t("inDays", { count: days })}
-    </span>
-  );
-}
-
-function HolidayRow({
-  holiday,
-  daysUntil,
+function DayGroup({
+  date,
+  holidays,
+  isToday,
+  isPast,
+  isLast,
 }: {
-  holiday: Holiday;
-  daysUntil: number | null;
+  date: Date;
+  holidays: Holiday[];
+  isToday: boolean;
+  isPast: boolean;
+  isLast: boolean;
 }) {
   const t = useTranslations("list");
   const locale = useLocale() as "sq" | "en" | "de";
   const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
-  const date = parseISO(holiday.date);
-  const isWknd = isWeekend(date);
-  const isPast = daysUntil !== null && daysUntil < 0;
-  const dayOff = isDayOff(holiday);
 
   return (
-    <li
+    <section
       className={cn(
-        "flex items-center gap-3 sm:gap-4 px-3 sm:px-4 py-3",
-        isPast && "opacity-50",
-        daysUntil === 0 && "bg-orange-50/70 dark:bg-orange-950/20"
+        "px-4 py-3 sm:px-0",
+        !isLast && "border-b border-border/40",
+        isPast && "opacity-45"
       )}
     >
-      <div
-        className={cn(
-          "flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-lg",
-          dayOff
-            ? "bg-muted/50 text-muted-foreground"
-            : "bg-orange-50 text-orange-700 dark:bg-orange-950/30 dark:text-orange-300"
-        )}
-      >
-        <span
-          className={cn(
-            "text-[10px] font-semibold uppercase leading-none tracking-wide",
-            isWknd ? "text-red-500 dark:text-red-400" : "opacity-80"
-          )}
-        >
-          {format(date, "EEE", { locale: dateFnsLocale }).replace(".", "")}
-        </span>
-        <span className="mt-1 text-lg font-bold leading-none tabular-nums">
-          {format(date, "d")}
-        </span>
-      </div>
-
-      <div className="min-w-0 flex-1">
-        <h4
-          className={cn(
-            "text-sm sm:text-base font-medium leading-snug text-foreground",
-            dayOff && "text-foreground/80"
-          )}
-        >
-          {displayName(holiday)}
-        </h4>
-        <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-          <span className="capitalize">
-            {format(date, "EEEE", { locale: dateFnsLocale })}
+      <div className="mb-1 flex items-center gap-2">
+        {isToday && (
+          <span className="rounded-md bg-foreground px-2 py-0.5 text-sm font-medium text-background">
+            {t("today")}
           </span>
-          {dayOff && (
-            <span className="rounded-full border border-border px-2 py-px font-medium">
-              {t("dayOff")}
-            </span>
-          )}
-        </div>
+        )}
+        <h3 className="text-sm font-medium text-foreground">
+          {format(date, "EEE, MMM d", { locale: dateFnsLocale })}
+        </h3>
       </div>
-
-      {daysUntil !== null && daysUntil >= 0 && <RelativeLabel days={daysUntil} />}
-    </li>
-  );
-}
-
-function NextHolidayCard({
-  holiday,
-  daysUntil,
-}: {
-  holiday: Holiday;
-  daysUntil: number;
-}) {
-  const t = useTranslations("list");
-  const locale = useLocale() as "sq" | "en" | "de";
-  const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
-  const date = parseISO(holiday.date);
-
-  const when =
-    daysUntil === 0
-      ? t("today")
-      : daysUntil === 1
-        ? t("tomorrow")
-        : t("inDays", { count: daysUntil });
-
-  return (
-    <div className="mx-4 sm:mx-0 flex items-center gap-3 sm:gap-4 rounded-xl border border-border bg-card px-3 sm:px-4 py-3">
-      <div className="flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-lg bg-secondary text-foreground">
-        <span
-          className={cn(
-            "text-[10px] font-semibold uppercase leading-none",
-            isWeekend(date) ? "text-red-500 dark:text-red-400" : "text-muted-foreground"
-          )}
-        >
-          {format(date, "EEE", { locale: dateFnsLocale }).replace(".", "")}
-        </span>
-        <span className="mt-1 text-lg font-bold leading-none tabular-nums">
-          {format(date, "d")}
-        </span>
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-xs text-muted-foreground">{t("nextHoliday")}</p>
-        <h4 className="text-sm sm:text-base font-medium leading-snug text-foreground">
-          {displayName(holiday)}
-        </h4>
-        <p className="mt-0.5 text-xs capitalize text-muted-foreground">
-          {format(date, "EEEE, d MMMM", { locale: dateFnsLocale })}
-        </p>
-      </div>
-      <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-        {when}
-      </span>
-    </div>
+      <ul>
+        {holidays.map((holiday) => {
+          const dayOff = isDayOff(holiday);
+          return (
+            <li key={holiday.date + holiday.name} className="flex gap-3 py-2.5">
+              <span
+                className={cn(
+                  "my-0.5 w-1 shrink-0 self-stretch rounded-full",
+                  dayOff ? "bg-muted-foreground/35" : "bg-orange-500"
+                )}
+              />
+              <div className="min-w-0">
+                <p className="text-[15px] font-medium leading-snug text-foreground">
+                  {displayName(holiday)}
+                </p>
+                {dayOff && (
+                  <p className="mt-0.5 text-sm text-muted-foreground">{t("dayOff")}</p>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 
@@ -185,99 +111,84 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
   const filteredHolidays = React.useMemo(() => {
     return holidays
       .filter((h) => h.country === "BOTH" || h.country === countryFilter)
-      .sort((a, b) => a.date.localeCompare(b.date));
+      .sort((a, b) => a.date.localeCompare(b.date) || a.name.localeCompare(b.name));
   }, [holidays, countryFilter]);
 
-  const daysUntil = React.useCallback(
-    (holiday: Holiday) =>
-      today ? differenceInCalendarDays(parseISO(holiday.date), today) : null,
-    [today]
-  );
-
   const pastCount = today
-    ? filteredHolidays.filter((h) => (daysUntil(h) ?? 0) < 0).length
+    ? filteredHolidays.filter(
+        (h) => differenceInCalendarDays(parseISO(h.date), today) < 0
+      ).length
     : 0;
-
-  const nextHoliday = today
-    ? filteredHolidays.find((h) => (daysUntil(h) ?? -1) >= 0 && !isDayOff(h))
-    : undefined;
 
   const visibleHolidays =
     today && !showPast
-      ? filteredHolidays.filter((h) => (daysUntil(h) ?? 0) >= 0)
+      ? filteredHolidays.filter(
+          (h) => differenceInCalendarDays(parseISO(h.date), today) >= 0
+        )
       : filteredHolidays;
 
-  const groupedHolidays = React.useMemo(() => {
-    const groups = new Map<number, Holiday[]>();
-    visibleHolidays.forEach((holiday) => {
-      const monthIndex = parseISO(holiday.date).getMonth();
-      const list = groups.get(monthIndex) ?? [];
-      list.push(holiday);
-      groups.set(monthIndex, list);
-    });
-    return [...groups.entries()]
-      .sort(([a], [b]) => a - b)
-      .map(([monthIndex, monthHolidays]) => ({
-        monthIndex,
-        month: format(parseISO(monthHolidays[0].date), "LLLL", {
-          locale: dateFnsLocale,
-        }),
-        monthHolidays,
-      }));
+  const months = React.useMemo(() => {
+    const byMonth = new Map<string, { date: string; holidays: Holiday[] }[]>();
+    for (const holiday of visibleHolidays) {
+      const monthKey = holiday.date.slice(0, 7);
+      const days = byMonth.get(monthKey) ?? [];
+      const last = days[days.length - 1];
+      if (last && last.date === holiday.date) {
+        last.holidays.push(holiday);
+      } else {
+        days.push({ date: holiday.date, holidays: [holiday] });
+      }
+      byMonth.set(monthKey, days);
+    }
+    return [...byMonth.entries()].map(([monthKey, days]) => ({
+      monthKey,
+      label: format(parseISO(`${monthKey}-01`), "MMMM", { locale: dateFnsLocale }),
+      days,
+    }));
   }, [visibleHolidays, dateFnsLocale]);
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      {nextHoliday && (
-        <NextHolidayCard
-          holiday={nextHoliday}
-          daysUntil={daysUntil(nextHoliday) ?? 0}
-        />
-      )}
-
+    <div>
       {pastCount > 0 && (
-        <div className="px-4 sm:px-0">
-          <button
-            type="button"
-            onClick={() => setShowPast((v) => !v)}
-            aria-expanded={showPast}
-            className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted/40 hover:text-foreground transition-colors cursor-pointer"
-          >
-            {showPast ? t("hidePast") : t("showPast", { count: pastCount })}
-            <ChevronDown
-              className={cn("h-4 w-4 transition-transform", showPast && "rotate-180")}
-            />
-          </button>
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowPast((v) => !v)}
+          aria-expanded={showPast}
+          className="flex w-full items-center gap-1.5 border-b border-border px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer sm:px-0"
+        >
+          <ChevronDown
+            className={cn("h-4 w-4 transition-transform", !showPast && "-rotate-90")}
+          />
+          {showPast ? t("hidePast") : t("showPast", { count: pastCount })}
+        </button>
       )}
 
-      {today && !nextHoliday && !showPast && (
-        <p className="px-4 sm:px-0 text-center text-sm text-muted-foreground">
+      {months.length === 0 && (
+        <p className="px-4 py-8 text-sm text-muted-foreground sm:px-0">
           {t("noUpcoming")}
         </p>
       )}
 
-      {groupedHolidays.map(({ month, monthHolidays, monthIndex }) => (
-        <section key={monthIndex} data-month-index={monthIndex}>
-          <div className="sticky top-[var(--filterbar-h)] z-30 flex items-baseline justify-between gap-2 bg-background px-4 py-3 sm:px-0">
-            <h3 className="text-lg sm:text-xl font-bold capitalize text-foreground">
-              {month}
+      {months.map(({ monthKey, label, days }) => (
+        <section key={monthKey} className="scroll-mt-[var(--filterbar-h)]">
+          <div className="sticky top-[var(--filterbar-h)] z-30 border-b border-border bg-background">
+            <h3 className="px-4 py-3 text-lg font-bold capitalize text-foreground sm:px-0 sm:text-xl">
+              {label}
             </h3>
-            <span className="text-xs font-medium text-muted-foreground">
-              {t("holidaysCount", {
-                count: monthHolidays.filter((h) => !isDayOff(h)).length,
-              })}
-            </span>
           </div>
-          <ul className="mx-4 sm:mx-0 divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
-            {monthHolidays.map((holiday) => (
-              <HolidayRow
-                key={holiday.date + holiday.name}
-                holiday={holiday}
-                daysUntil={daysUntil(holiday)}
+          {days.map(({ date, holidays: dayHolidays }, index) => {
+            const parsed = parseISO(date);
+            return (
+              <DayGroup
+                key={date}
+                date={parsed}
+                holidays={dayHolidays}
+                isToday={today ? isSameDay(parsed, today) : false}
+                isPast={today ? differenceInCalendarDays(parsed, today) < 0 : false}
+                isLast={index === days.length - 1}
               />
-            ))}
-          </ul>
+            );
+          })}
         </section>
       ))}
     </div>
