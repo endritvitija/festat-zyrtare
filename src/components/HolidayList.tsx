@@ -1,144 +1,195 @@
 "use client";
 
 import * as React from "react";
-import { format, parseISO, isWeekend } from "date-fns";
+import {
+  format,
+  parseISO,
+  differenceInCalendarDays,
+  startOfDay,
+  isSameDay,
+} from "date-fns";
 import { sq, enUS, de } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
+import { ChevronDown } from "lucide-react";
 import { Holiday, SingleCountry } from "@/types";
 import { cn } from "@/lib/utils";
 
 const dateFnsLocaleMap = { sq, en: enUS, de } as const;
+
+const DAY_OFF_SUFFIX = /\s*\(Pushim\)$/;
 
 interface HolidayListProps {
   holidays: Holiday[];
   countryFilter: SingleCountry;
 }
 
-function HolidayListItem({ holiday, countryFilter }: { holiday: Holiday; countryFilter: SingleCountry }) {
-  const date = parseISO(holiday.date);
-  const isWknd = isWeekend(date);
+function isDayOff(holiday: Holiday): boolean {
+  return DAY_OFF_SUFFIX.test(holiday.name);
+}
+
+function displayName(holiday: Holiday): string {
+  return holiday.name.replace(DAY_OFF_SUFFIX, "");
+}
+
+function useToday(): Date | null {
+  const [today, setToday] = React.useState<Date | null>(null);
+  React.useEffect(() => {
+    setToday(startOfDay(new Date()));
+  }, []);
+  return today;
+}
+
+function DayGroup({
+  date,
+  holidays,
+  isToday,
+  isPast,
+  isLast,
+}: {
+  date: Date;
+  holidays: Holiday[];
+  isToday: boolean;
+  isPast: boolean;
+  isLast: boolean;
+}) {
+  const t = useTranslations("list");
   const locale = useLocale() as "sq" | "en" | "de";
   const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
-  const tCountries = useTranslations("countries");
-
-  const countryNames: Record<SingleCountry, string> = {
-    AL: tCountries("AL"),
-    XK: tCountries("XK"),
-    ME: tCountries("ME"),
-    MK: tCountries("MK"),
-  };
-
-  const countryFlags: Record<SingleCountry, string> = {
-    AL: '🇦🇱',
-    XK: '🇽🇰',
-    ME: '🇲🇪',
-    MK: '🇲🇰',
-  };
-
-  const getDisplayFlags = () => {
-    const displayCountry = holiday.country === 'BOTH' ? countryFilter : holiday.country;
-    return (
-      <span className="text-xs text-muted-foreground flex items-center gap-1">
-        {countryFlags[displayCountry]} {countryNames[displayCountry]}
-      </span>
-    );
-  };
 
   return (
-    <div
+    <section
       className={cn(
-        "flex items-center justify-between p-3 px-4 transition-colors border-b border-border",
-        isWknd && "opacity-90"
+        "px-4 py-3 sm:px-0",
+        !isLast && "border-b border-border/40",
+        isPast && "opacity-45"
       )}
     >
-      <div className="flex items-center gap-4">
-        <div
-          className={cn(
-            "flex flex-col items-center justify-center w-12 h-12 rounded-lg bg-muted/30",
-            isWknd && "text-red-500/80"
-          )}
-        >
-          <span
-            className={cn(
-              "text-[10px] font-bold uppercase text-muted-foreground",
-              isWknd && "text-red-500/80"
-            )}
-          >
-            {format(date, "EEEE", { locale: dateFnsLocale })}
+      <div className="mb-1 flex items-center gap-2">
+        {isToday && (
+          <span className="rounded-md bg-foreground px-2 py-0.5 text-sm font-medium text-background">
+            {t("today")}
           </span>
-          <span className="text-lg font-bold leading-none">
-            {format(date, "d")}
-          </span>
-        </div>
-        <div>
-          <h4 className="font-medium text-foreground">{holiday.name}</h4>
-          <div className="flex items-center gap-2 mt-0.5">
-            {getDisplayFlags()}
-          </div>
-        </div>
+        )}
+        <h3 className="text-sm font-medium text-foreground">
+          {format(date, "EEE, MMM d", { locale: dateFnsLocale })}
+        </h3>
       </div>
-    </div>
+      <ul>
+        {holidays.map((holiday) => {
+          const dayOff = isDayOff(holiday);
+          return (
+            <li key={holiday.date + holiday.name} className="flex gap-3 py-2.5">
+              <span
+                className={cn(
+                  "my-0.5 w-1 shrink-0 self-stretch rounded-full",
+                  dayOff ? "bg-muted-foreground/35" : "bg-orange-500"
+                )}
+              />
+              <div className="min-w-0">
+                <p className="text-[15px] font-medium leading-snug text-foreground">
+                  {displayName(holiday)}
+                </p>
+                {dayOff && (
+                  <p className="mt-0.5 text-sm text-muted-foreground">{t("dayOff")}</p>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
   );
 }
 
 export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
+  const t = useTranslations("list");
   const locale = useLocale() as "sq" | "en" | "de";
   const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
+  const today = useToday();
+  const [showPast, setShowPast] = React.useState(false);
 
   const filteredHolidays = React.useMemo(() => {
-    return holidays.filter(
-      (h) => h.country === "BOTH" || h.country === countryFilter
-    );
+    return holidays
+      .filter((h) => h.country === "BOTH" || h.country === countryFilter)
+      .sort((a, b) => a.date.localeCompare(b.date) || a.name.localeCompare(b.name));
   }, [holidays, countryFilter]);
 
-  const groupedHolidays = React.useMemo(() => {
-    const groups: Record<string, Holiday[]> = {};
-    filteredHolidays.forEach((holiday) => {
-      const month = format(parseISO(holiday.date), "MMMM", { locale: dateFnsLocale });
-      if (!groups[month]) {
-        groups[month] = [];
+  const pastCount = today
+    ? filteredHolidays.filter(
+        (h) => differenceInCalendarDays(parseISO(h.date), today) < 0
+      ).length
+    : 0;
+
+  const visibleHolidays =
+    today && !showPast
+      ? filteredHolidays.filter(
+          (h) => differenceInCalendarDays(parseISO(h.date), today) >= 0
+        )
+      : filteredHolidays;
+
+  const months = React.useMemo(() => {
+    const byMonth = new Map<string, { date: string; holidays: Holiday[] }[]>();
+    for (const holiday of visibleHolidays) {
+      const monthKey = holiday.date.slice(0, 7);
+      const days = byMonth.get(monthKey) ?? [];
+      const last = days[days.length - 1];
+      if (last && last.date === holiday.date) {
+        last.holidays.push(holiday);
+      } else {
+        days.push({ date: holiday.date, holidays: [holiday] });
       }
-      groups[month].push(holiday);
-    });
-    // Sort each month's holidays by date, then return entries sorted by month index (Jan=0 .. Dec=11)
-    const entries = Object.entries(groups).map(([month, monthHolidays]) => {
-      const sorted = [...monthHolidays].sort(
-        (a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime()
-      );
-      const monthIndex = parseISO(sorted[0].date).getMonth();
-      return { month, monthHolidays: sorted, monthIndex };
-    });
-    entries.sort((a, b) => a.monthIndex - b.monthIndex);
-    return entries;
-  }, [filteredHolidays, dateFnsLocale]);
-
-  const listContainerRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    const currentMonthIndex = new Date().getMonth();
-    const el = listContainerRef.current?.querySelector(
-      `[data-month-index="${currentMonthIndex}"]`
-    ) as HTMLElement | null;
-    el?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
+      byMonth.set(monthKey, days);
+    }
+    return [...byMonth.entries()].map(([monthKey, days]) => ({
+      monthKey,
+      label: format(parseISO(`${monthKey}-01`), "MMMM", { locale: dateFnsLocale }),
+      days,
+    }));
+  }, [visibleHolidays, dateFnsLocale]);
 
   return (
-    <div ref={listContainerRef} className="space-y-12 max-w-1xl mx-auto">
-      {groupedHolidays.map(({ month, monthHolidays, monthIndex }) => (
-        <div key={month} data-month-index={monthIndex}>
-          <h3 className="text-xl font-bold capitalize text-foreground px-4 py-4 sticky top-[180px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm border-b-2 border-border/50">
-            {month}
-          </h3>
-          <div className="space-y-2">
-            {monthHolidays.map((holiday) => (
-              <HolidayListItem
-                key={holiday.date + holiday.name}
-                holiday={holiday}
-                countryFilter={countryFilter}
-              />
-            ))}
+    <div>
+      {pastCount > 0 && (
+        <button
+          type="button"
+          onClick={() => setShowPast((v) => !v)}
+          aria-expanded={showPast}
+          className="flex w-full items-center gap-1.5 border-b border-border px-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer sm:px-0"
+        >
+          <ChevronDown
+            className={cn("h-4 w-4 transition-transform", !showPast && "-rotate-90")}
+          />
+          {showPast ? t("hidePast") : t("showPast", { count: pastCount })}
+        </button>
+      )}
+
+      {months.length === 0 && (
+        <p className="px-4 py-8 text-sm text-muted-foreground sm:px-0">
+          {t("noUpcoming")}
+        </p>
+      )}
+
+      {months.map(({ monthKey, label, days }) => (
+        <section key={monthKey} className="scroll-mt-[var(--filterbar-h)]">
+          <div className="sticky top-[var(--filterbar-h)] z-30 border-b border-border bg-background">
+            <h3 className="px-4 py-3 text-lg font-bold capitalize text-foreground sm:px-0 sm:text-xl">
+              {label}
+            </h3>
           </div>
-        </div>
+          {days.map(({ date, holidays: dayHolidays }, index) => {
+            const parsed = parseISO(date);
+            return (
+              <DayGroup
+                key={date}
+                date={parsed}
+                holidays={dayHolidays}
+                isToday={today ? isSameDay(parsed, today) : false}
+                isPast={today ? differenceInCalendarDays(parsed, today) < 0 : false}
+                isLast={index === days.length - 1}
+              />
+            );
+          })}
+        </section>
       ))}
     </div>
   );

@@ -7,6 +7,9 @@ import { useTranslations } from "next-intl";
 import { FilterBar } from "@/components/FilterBar";
 import { HolidayCalendar } from "@/components/HolidayCalendar";
 import { HolidayList } from "@/components/HolidayList";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ScrollToTop } from "@/components/ScrollToTop";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { getHolidayYear, getHolidaysForYear } from "@/data/holidays";
 import { SingleCountry } from "@/types";
 import { GitBranch } from "lucide-react";
@@ -52,7 +55,6 @@ function HomeContent() {
   const router = useRouter();
   const pathname = usePathname();
   const tCommon = useTranslations("common");
-  const tCountries = useTranslations("countries");
   const tHome = useTranslations("home");
   const tFooter = useTranslations("footer");
 
@@ -117,32 +119,26 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-background transition-colors duration-300">
-      <main className="container mx-auto px-0 sm:px-4 py-8">
+      <main className="container mx-auto px-0 sm:px-4 pt-4 pb-8 sm:py-8">
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col items-start text-left mb-12 space-y-6 px-4 sm:px-0">
-            <span className="px-4 py-1.5 rounded-full border border-border text-muted-foreground text-sm font-medium">
-              {tCommon("year", { year })}
-            </span>
-            <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1]">
+          <header className="flex flex-col gap-4 sm:gap-6 mb-6 sm:mb-10 px-4 sm:px-0">
+            <div className="flex items-center justify-between gap-3">
+              <span className="px-3 py-1 rounded-full border border-border text-muted-foreground text-sm font-medium tabular-nums">
+                {tCommon("year", { year })}
+              </span>
+              <div className="flex items-center gap-2">
+                <LanguageSwitcher />
+                <ThemeToggle />
+              </div>
+            </div>
+            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1]">
               {tHome("title")}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-muted-foreground pt-2">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium text-muted-foreground">
               <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500"></span>
-                {tCountries("AL")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
-                {tCountries("XK")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-green-500"></span>
-                {tCountries("ME")}
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
-                {tCountries("MK")}
+                <span className="w-2.5 h-2.5 rounded-full bg-orange-400 dark:bg-orange-500"></span>
+                {tCommon("holiday")}
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-muted-foreground/30"></span>
@@ -153,7 +149,7 @@ function HomeContent() {
                 {tCommon("recommendation")}
               </div>
             </div>
-          </div>
+          </header>
 
           <FilterBar
             countryFilter={countryFilter}
@@ -163,7 +159,7 @@ function HomeContent() {
             onViewChange={setView}
           />
 
-          <div className="mt-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="mt-4 sm:mt-6 animate-in fade-in duration-300">
             {view === "CALENDAR" ? (
               <HolidayCalendar
                 holidays={holidays}
@@ -185,7 +181,9 @@ function HomeContent() {
         </div>
       </main>
 
-      <footer className="border-t border-border mt-12 py-8 text-center text-sm text-muted-foreground px-4">
+      <ScrollToTop />
+
+      <footer className="border-t border-border mt-12 px-4 pt-8 pb-28 text-center text-sm text-muted-foreground">
         <div className="flex flex-col items-center gap-4">
           {/* <SubscribeSection /> */}
           <p>{tFooter("copyright", { year })}</p>
@@ -220,6 +218,17 @@ function HomeContent() {
           </div>
           <p className="text-xs text-muted-foreground/60">
             {tFooter("updated", { year })}
+          </p>
+          <p className="text-xs text-muted-foreground/60">
+            {tFooter("madeBy")}{" "}
+            <a
+              href="https://endritvitija.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors"
+            >
+              endritvitija.com
+            </a>
           </p>
         </div>
       </footer>

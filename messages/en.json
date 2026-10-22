@@ -3,9 +3,11 @@
     "year": "{year}",
     "loading": "Loading...",
     "all": "All",
+    "holiday": "Official holiday",
     "weekend": "Weekend",
     "recommendation": "Holiday recommendation",
-    "recommendationTooltip": "Recommendation to take a day off"
+    "recommendationTooltip": "Recommendation to take a day off",
+    "backToTop": "Back to top"
   },
   "countries": {
     "AL": "Albania",
@@ -30,6 +32,7 @@
     "sourceKosovo": "Source for Kosovo",
     "github": "GitHub",
     "updated": "Calendar for {year}",
+    "madeBy": "Made by",
     "subscribeTitle": "Monthly holiday emails",
     "subscribeDescription": "We'll send you an email at the start of each month with that month's national holidays.",
     "subscribePlaceholder": "Your email",
@@ -44,6 +47,18 @@
     "selectCountryToDownloadTitle": "Select a country to download holidays",
     "calendarView": "Calendar view",
     "listView": "List view"
+  },
+  "list": {
+    "nextHoliday": "Next holiday",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "inDays": "{count, plural, one {in # day} other {in # days}}",
+    "daysLeft": "{count, plural, one {day left} other {days left}}",
+    "dayOff": "Day off",
+    "showPast": "{count, plural, one {Show # past holiday} other {Show # past holidays}}",
+    "hidePast": "Hide past holidays",
+    "holidaysCount": "{count, plural, =0 {} one {# holiday} other {# holidays}}",
+    "noUpcoming": "No more official holidays this year."
   },
   "theme": {
     "light": "Light theme",

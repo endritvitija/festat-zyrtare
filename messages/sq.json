@@ -3,9 +3,11 @@
     "year": "{year}",
     "loading": "Duke u ngarkuar...",
     "all": "Të gjitha",
+    "holiday": "Festë zyrtare",
     "weekend": "Fundjavë",
     "recommendation": "Rekomandim për pushim",
-    "recommendationTooltip": "Rekomandim për të marrë një ditë pushimi"
+    "recommendationTooltip": "Rekomandim për të marrë një ditë pushimi",
+    "backToTop": "Kthehu lart"
   },
   "countries": {
     "AL": "Shqipëri",
@@ -30,6 +32,7 @@
     "sourceKosovo": "Burimi për Kosovë",
     "github": "GitHub",
     "updated": "Kalendari për vitin {year}",
+    "madeBy": "Bërë nga",
     "subscribeTitle": "Email çdo muaj për festat",
     "subscribeDescription": "Do të të dërgojmë një email në fillim të çdo muaji me festat zyrtare të atij muaji.",
     "subscribePlaceholder": "Emaili juaj",
@@ -44,6 +47,18 @@
     "selectCountryToDownloadTitle": "Zgjidhni një shtet për të shkarkuar festat",
     "calendarView": "Pamje kalendar",
     "listView": "Pamje listë"
+  },
+  "list": {
+    "nextHoliday": "Festa e radhës",
+    "today": "Sot",
+    "tomorrow": "Nesër",
+    "inDays": "{count, plural, one {pas # dite} other {pas # ditësh}}",
+    "daysLeft": "{count, plural, one {ditë} other {ditë}}",
+    "dayOff": "Ditë pushimi",
+    "showPast": "{count, plural, one {Shfaq # festë të kaluar} other {Shfaq # festat e kaluara}}",
+    "hidePast": "Fshih festat e kaluara",
+    "holidaysCount": "{count, plural, =0 {} one {# festë} other {# festa}}",
+    "noUpcoming": "Nuk ka më festa zyrtare për këtë vit."
   },
   "theme": {
     "light": "Tema e ndritur",
