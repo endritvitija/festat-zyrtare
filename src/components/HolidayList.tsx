@@ -10,10 +10,9 @@ import {
 } from "date-fns";
 import { sq, enUS, de } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
-import { ChevronDown, CalendarClock } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Holiday, SingleCountry } from "@/types";
 import { cn } from "@/lib/utils";
-import { COUNTRY_FLAGS } from "@/lib/countries";
 
 const dateFnsLocaleMap = { sq, en: enUS, de } as const;
 
@@ -129,56 +128,49 @@ function HolidayRow({
 function NextHolidayCard({
   holiday,
   daysUntil,
-  countryFilter,
 }: {
   holiday: Holiday;
   daysUntil: number;
-  countryFilter: SingleCountry;
 }) {
   const t = useTranslations("list");
   const locale = useLocale() as "sq" | "en" | "de";
   const dateFnsLocale = dateFnsLocaleMap[locale] ?? sq;
   const date = parseISO(holiday.date);
 
+  const when =
+    daysUntil === 0
+      ? t("today")
+      : daysUntil === 1
+        ? t("tomorrow")
+        : t("inDays", { count: daysUntil });
+
   return (
-    <div className="mx-4 sm:mx-0 rounded-2xl border border-orange-200 bg-gradient-to-br from-orange-50 to-amber-50 p-4 sm:p-5 dark:border-orange-900/50 dark:from-orange-950/40 dark:to-amber-950/20">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-orange-700 dark:text-orange-300">
-        <CalendarClock className="h-4 w-4" />
-        {t("nextHoliday")}
-      </div>
-      <div className="mt-3 flex items-end justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-lg sm:text-xl font-bold leading-tight text-foreground">
-            {displayName(holiday)}
-          </p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            <span className="mr-1.5">{COUNTRY_FLAGS[countryFilter]}</span>
-            <span className="capitalize">
-              {format(date, "EEEE, d MMMM", { locale: dateFnsLocale })}
-            </span>
-          </p>
-        </div>
-        <div className="shrink-0 text-right">
-          {daysUntil === 0 ? (
-            <span className="text-2xl font-extrabold text-orange-600 dark:text-orange-400">
-              {t("today")}
-            </span>
-          ) : daysUntil === 1 ? (
-            <span className="text-2xl font-extrabold text-orange-600 dark:text-orange-400">
-              {t("tomorrow")}
-            </span>
-          ) : (
-            <>
-              <span className="block text-3xl font-extrabold leading-none text-orange-600 dark:text-orange-400 tabular-nums">
-                {daysUntil}
-              </span>
-              <span className="text-xs font-medium text-muted-foreground">
-                {t("daysLeft", { count: daysUntil })}
-              </span>
-            </>
+    <div className="mx-4 sm:mx-0 flex items-center gap-3 sm:gap-4 rounded-xl border border-border bg-card px-3 sm:px-4 py-3">
+      <div className="flex flex-col items-center justify-center shrink-0 w-12 h-12 rounded-lg bg-secondary text-foreground">
+        <span
+          className={cn(
+            "text-[10px] font-semibold uppercase leading-none",
+            isWeekend(date) ? "text-red-500 dark:text-red-400" : "text-muted-foreground"
           )}
-        </div>
+        >
+          {format(date, "EEE", { locale: dateFnsLocale }).replace(".", "")}
+        </span>
+        <span className="mt-1 text-lg font-bold leading-none tabular-nums">
+          {format(date, "d")}
+        </span>
       </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs text-muted-foreground">{t("nextHoliday")}</p>
+        <h4 className="text-sm sm:text-base font-medium leading-snug text-foreground">
+          {displayName(holiday)}
+        </h4>
+        <p className="mt-0.5 text-xs capitalize text-muted-foreground">
+          {format(date, "EEEE, d MMMM", { locale: dateFnsLocale })}
+        </p>
+      </div>
+      <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
+        {when}
+      </span>
     </div>
   );
 }
@@ -240,7 +232,6 @@ export function HolidayList({ holidays, countryFilter }: HolidayListProps) {
         <NextHolidayCard
           holiday={nextHoliday}
           daysUntil={daysUntil(nextHoliday) ?? 0}
-          countryFilter={countryFilter}
         />
       )}
 
