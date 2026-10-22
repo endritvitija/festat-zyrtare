@@ -154,20 +154,15 @@ export function HolidayCalendar({ holidays, year, countryFilter }: HolidayCalend
             data-month={format(month, "yyyy-MM")}
             className="w-full scroll-mt-[var(--filterbar-h)]"
           >
-            <div className="sticky top-[var(--filterbar-h)] z-30 bg-background border-b border-border/60">
-              <h3 className="text-lg sm:text-xl font-bold capitalize text-foreground pt-3 pb-1 px-4 sm:px-0">
+            <div className="sticky top-[var(--filterbar-h)] z-30 bg-background">
+              <h3 className="text-lg sm:text-xl font-bold capitalize text-foreground pt-4 pb-3 px-4 sm:px-0">
                 {format(month, "MMMM", { locale: dateFnsLocale })}
               </h3>
-              <div className="grid grid-cols-7 text-xs sm:text-sm py-2 px-4 sm:px-0">
-                {weekdaysShort.map((day, index) => (
+              <div className="grid grid-cols-7 border-y border-border text-xs sm:text-sm py-2.5 px-4 sm:px-0">
+                {weekdaysShort.map((day) => (
                   <div
                     key={day}
-                    className={cn(
-                      "font-medium px-1.5 sm:px-2",
-                      index >= 5
-                        ? "text-red-500 dark:text-red-400"
-                        : "text-muted-foreground"
-                    )}
+                    className="font-medium text-muted-foreground px-1.5 sm:px-2"
                   >
                     {day}
                   </div>
