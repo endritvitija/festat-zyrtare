@@ -183,7 +183,7 @@ function HomeContent() {
 
       <ScrollToTop />
 
-      <footer className="border-t border-border mt-12 py-8 text-center text-sm text-muted-foreground px-4">
+      <footer className="border-t border-border mt-12 px-4 pt-8 pb-28 text-center text-sm text-muted-foreground">
         <div className="flex flex-col items-center gap-4">
           {/* <SubscribeSection /> */}
           <p>{tFooter("copyright", { year })}</p>
@@ -218,6 +218,17 @@ function HomeContent() {
           </div>
           <p className="text-xs text-muted-foreground/60">
             {tFooter("updated", { year })}
+          </p>
+          <p className="text-xs text-muted-foreground/60">
+            {tFooter("madeBy")}{" "}
+            <a
+              href="https://endritvitija.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground transition-colors"
+            >
+              endritvitija.com
+            </a>
           </p>
         </div>
       </footer>
