@@ -37,9 +37,18 @@ export async function generateMetadata(): Promise<Metadata> {
     ],
     robots: { index: true, follow: true },
     icons: {
-      icon: "/favicon.ico",
-      shortcut: "/favicon.ico",
-      apple: "/apple-touch-icon.png",
+      icon: [
+        {
+          url: "/icon.svg",
+          type: "image/svg+xml",
+          media: "(prefers-color-scheme: light)",
+        },
+        {
+          url: "/icon-light.svg",
+          type: "image/svg+xml",
+          media: "(prefers-color-scheme: dark)",
+        },
+      ],
     },
     openGraph: {
       type: "website",
