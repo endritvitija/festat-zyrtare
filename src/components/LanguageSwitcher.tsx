@@ -53,15 +53,15 @@ export function LanguageSwitcher() {
   };
 
   return (
-    <div className="relative w-full sm:w-auto" ref={dropdownRef}>
+    <div className="relative" ref={dropdownRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
         disabled={isPending}
         className={cn(
-          "flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-sm font-medium",
-          "bg-secondary/50 hover:bg-secondary text-foreground transition-all border border-transparent hover:border-border",
-          "min-w-[100px] sm:min-w-[110px]"
+          "flex items-center justify-between gap-2 h-10 px-3 rounded-lg text-sm font-medium cursor-pointer",
+          "bg-secondary/60 hover:bg-secondary text-foreground transition-colors border border-transparent hover:border-border",
+          "min-w-[100px]"
         )}
         aria-expanded={isOpen}
         aria-haspopup="listbox"

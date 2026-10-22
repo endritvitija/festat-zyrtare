@@ -3,6 +3,7 @@
     "year": "{year}",
     "loading": "Laden...",
     "all": "Alle",
+    "holiday": "Feiertag",
     "weekend": "Wochenende",
     "recommendation": "Urlaubsempfehlung",
     "recommendationTooltip": "Empfehlung, einen Urlaubstag zu nehmen"
@@ -44,6 +45,18 @@
     "selectCountryToDownloadTitle": "Wählen Sie ein Land, um die Feiertage herunterzuladen",
     "calendarView": "Kalenderansicht",
     "listView": "Listenansicht"
+  },
+  "list": {
+    "nextHoliday": "Nächster Feiertag",
+    "today": "Heute",
+    "tomorrow": "Morgen",
+    "inDays": "{count, plural, one {in # Tag} other {in # Tagen}}",
+    "daysLeft": "{count, plural, one {Tag} other {Tage}}",
+    "dayOff": "Freier Tag",
+    "showPast": "{count, plural, one {# vergangenen Feiertag anzeigen} other {# vergangene Feiertage anzeigen}}",
+    "hidePast": "Vergangene Feiertage ausblenden",
+    "holidaysCount": "{count, plural, =0 {} one {# Feiertag} other {# Feiertage}}",
+    "noUpcoming": "Keine weiteren Feiertage in diesem Jahr."
   },
   "theme": {
     "light": "Hell",

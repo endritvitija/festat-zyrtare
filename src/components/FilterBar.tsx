@@ -1,14 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Calendar, List, Download, ChevronDown } from "lucide-react";
+import { Calendar, List, Download, ChevronDown, Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Holiday, SingleCountry } from "@/types";
 import { cn } from "@/lib/utils";
 import { downloadBulkIcsFile } from "@/lib/calendar";
-
-import { ThemeToggle } from "./ThemeToggle";
-import { LanguageSwitcher } from "./LanguageSwitcher";
+import { COUNTRY_FLAGS } from "@/lib/countries";
 
 interface FilterBarProps {
   countryFilter: SingleCountry;
@@ -17,6 +15,8 @@ interface FilterBarProps {
   onCountryChange: (country: SingleCountry) => void;
   onViewChange: (view: "CALENDAR" | "LIST") => void;
 }
+
+const COUNTRIES: SingleCountry[] = ["AL", "XK", "ME", "MK"];
 
 export function FilterBar({
   countryFilter,
@@ -27,11 +27,10 @@ export function FilterBar({
 }: FilterBarProps) {
   const [isCountryMenuOpen, setIsCountryMenuOpen] = React.useState(false);
   const countryDropdownRef = React.useRef<HTMLDivElement>(null);
+  const barRef = React.useRef<HTMLDivElement>(null);
   const tFilter = useTranslations("filterBar");
   const tCountries = useTranslations("countries");
   const tCountriesDownload = useTranslations("countriesDownload");
-
-  const countries: SingleCountry[] = ["AL", "XK", "ME", "MK"];
 
   const countryNames: Record<SingleCountry, string> = {
     AL: tCountries("AL"),
@@ -64,7 +63,7 @@ export function FilterBar({
   }, [holidays]);
 
   React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       if (
         countryDropdownRef.current &&
         !countryDropdownRef.current.contains(event.target as Node)
@@ -72,8 +71,33 @@ export function FilterBar({
         setIsCountryMenuOpen(false);
       }
     };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsCountryMenuOpen(false);
+    };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  // Sticky month headers below this bar read its height from --filterbar-h
+  React.useEffect(() => {
+    const el = barRef.current;
+    if (!el) return;
+    const update = () => {
+      document.documentElement.style.setProperty(
+        "--filterbar-h",
+        `${el.offsetHeight}px`
+      );
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(el);
+    return () => observer.disconnect();
   }, []);
 
   const handleBulkImport = (country: SingleCountry) => {
@@ -83,41 +107,67 @@ export function FilterBar({
     downloadBulkIcsFile(countryHolidays, downloadButtonCountryNames[country]);
   };
 
+  const downloadLabel = tFilter("downloadTitle", {
+    country: downloadButtonCountryNames[countryFilter],
+  });
+
   return (
-    <div className="sticky top-0 z-40 flex flex-col sm:flex-row items-center justify-between gap-4 w-full mb-8 py-4 px-4 bg-background  border-b border-border/40 transition-all">
-      <div className="flex flex-wrap items-center justify-center gap-4 w-full sm:w-auto">
-        <div className="relative w-full sm:w-auto" ref={countryDropdownRef}>
+    <div
+      ref={barRef}
+      className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur-sm border-b border-border/60"
+    >
+      <div className="flex items-center gap-2 sm:gap-3 px-4 py-3 sm:px-0">
+        <div className="relative flex-1 sm:flex-none min-w-0" ref={countryDropdownRef}>
           <button
+            type="button"
             onClick={() => setIsCountryMenuOpen(!isCountryMenuOpen)}
-            className="flex items-center justify-between gap-2 px-4 py-3 rounded-lg text-sm font-medium bg-secondary/50 hover:bg-secondary text-foreground transition-all border border-transparent hover:border-border w-full sm:w-auto min-w-[180px]"
+            aria-haspopup="listbox"
+            aria-expanded={isCountryMenuOpen}
+            className="flex items-center justify-between gap-2 h-11 px-3 sm:px-4 rounded-lg text-sm font-medium bg-secondary/60 hover:bg-secondary text-foreground transition-colors border border-transparent hover:border-border w-full sm:min-w-[220px] cursor-pointer"
           >
-            <span>{countryNames[countryFilter]}</span>
+            <span className="flex items-center gap-2 min-w-0">
+              <span className="text-base leading-none">{COUNTRY_FLAGS[countryFilter]}</span>
+              <span className="truncate">{countryNames[countryFilter]}</span>
+            </span>
             <ChevronDown
               className={cn(
-                "w-4 h-4 transition-transform",
+                "w-4 h-4 shrink-0 transition-transform",
                 isCountryMenuOpen && "rotate-180"
               )}
             />
           </button>
 
           {isCountryMenuOpen && (
-            <div className="absolute left-0 mt-2 w-full sm:w-56 rounded-md shadow-lg bg-popover border border-border z-50 py-1 animate-in fade-in zoom-in-95 duration-100">
-              {countries.map((country) => (
+            <div
+              role="listbox"
+              className="absolute left-0 mt-2 w-full sm:w-64 rounded-lg shadow-lg bg-popover border border-border z-50 p-1 animate-in fade-in zoom-in-95 duration-100"
+            >
+              {COUNTRIES.map((country) => (
                 <button
                   key={country}
+                  type="button"
+                  role="option"
+                  aria-selected={countryFilter === country}
                   onClick={() => {
                     onCountryChange(country);
                     setIsCountryMenuOpen(false);
                   }}
                   className={cn(
-                    "flex items-center justify-between w-full text-left px-4 py-3 text-sm text-popover-foreground hover:bg-muted transition-colors",
-                    countryFilter === country && "bg-muted/50 font-medium"
+                    "flex items-center gap-3 w-full text-left px-3 py-3 rounded-md text-sm text-popover-foreground hover:bg-muted transition-colors cursor-pointer",
+                    countryFilter === country && "bg-muted/60 font-medium"
                   )}
                 >
-                  <span>{countryNames[country]}</span>
-                  <span className="text-xs text-muted-foreground ml-2">
-                    ({getHolidayCount[country]})
+                  <span className="text-base leading-none">{COUNTRY_FLAGS[country]}</span>
+                  <span className="flex-1 truncate">{countryNames[country]}</span>
+                  <span className="text-xs text-muted-foreground tabular-nums">
+                    {getHolidayCount[country]}
                   </span>
+                  <Check
+                    className={cn(
+                      "w-4 h-4 shrink-0",
+                      countryFilter === country ? "opacity-100" : "opacity-0"
+                    )}
+                  />
                 </button>
               ))}
             </div>
@@ -127,50 +177,49 @@ export function FilterBar({
         <button
           type="button"
           onClick={() => handleBulkImport(countryFilter)}
-          className="flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium transition-all border w-full sm:w-auto bg-secondary/50 hover:bg-secondary text-foreground border-transparent hover:border-border cursor-pointer"
-          title={tFilter("downloadTitle", {
-            country: downloadButtonCountryNames[countryFilter],
-          })}
+          className="flex items-center justify-center gap-2 h-11 w-11 sm:w-auto sm:px-4 shrink-0 rounded-lg text-sm font-medium bg-secondary/60 hover:bg-secondary text-foreground border border-transparent hover:border-border transition-colors cursor-pointer"
+          title={downloadLabel}
+          aria-label={downloadLabel}
         >
           <Download className="w-4 h-4 shrink-0" />
-          <span>
+          <span className="hidden sm:inline">
             {tFilter("downloadFor", {
               country: downloadButtonCountryNames[countryFilter],
             })}
           </span>
         </button>
-      </div>
 
-      <div className="flex items-center justify-between w-full sm:w-auto sm:justify-start sm:gap-2">
-        <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-lg">
+        <div className="flex items-center gap-1 bg-secondary/60 p-1 rounded-lg shrink-0 sm:ml-auto">
           <button
+            type="button"
             onClick={() => onViewChange("CALENDAR")}
+            aria-pressed={view === "CALENDAR"}
             className={cn(
-              "p-2 rounded-md transition-all cursor-pointer",
+              "flex items-center justify-center h-9 w-9 rounded-md transition-all cursor-pointer",
               view === "CALENDAR"
                 ? "bg-background shadow-sm text-foreground"
                 : "text-muted-foreground hover:text-foreground"
             )}
             aria-label={tFilter("calendarView")}
+            title={tFilter("calendarView")}
           >
             <Calendar className="h-5 w-5" />
           </button>
           <button
+            type="button"
             onClick={() => onViewChange("LIST")}
+            aria-pressed={view === "LIST"}
             className={cn(
-              "p-2 rounded-md transition-all cursor-pointer",
+              "flex items-center justify-center h-9 w-9 rounded-md transition-all cursor-pointer",
               view === "LIST"
                 ? "bg-background shadow-sm text-foreground"
                 : "text-muted-foreground hover:text-foreground"
             )}
             aria-label={tFilter("listView")}
+            title={tFilter("listView")}
           >
             <List className="h-5 w-5" />
           </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <LanguageSwitcher />
-          <ThemeToggle />
         </div>
       </div>
     </div>

@@ -19,6 +19,7 @@ import { sq, enUS, de } from "date-fns/locale";
 import { useLocale, useTranslations } from "next-intl";
 import { Holiday, SingleCountry } from "@/types";
 import { cn } from "@/lib/utils";
+import { COUNTRY_FLAGS } from "@/lib/countries";
 
 const dateFnsLocaleMap = { sq, en: enUS, de } as const;
 
@@ -43,13 +44,6 @@ export function HolidayCalendar({ holidays, year, countryFilter }: HolidayCalend
     tWd("5"),
     tWd("6"),
   ];
-
-  const countryFlags: Record<SingleCountry, string> = {
-    AL: "🇦🇱",
-    XK: "🇽🇰",
-    ME: "🇲🇪",
-    MK: "🇲🇰",
-  };
 
   const countryNames: Record<SingleCountry, string> = {
     AL: tCountries("AL"),
@@ -148,7 +142,7 @@ export function HolidayCalendar({ holidays, year, countryFilter }: HolidayCalend
   }
 
   return (
-    <div ref={calendarContainerRef} className="space-y-12 max-w-1xl mx-auto">
+    <div ref={calendarContainerRef} className="space-y-6 sm:space-y-12">
       {months.map((month) => {
         const monthStart = startOfWeek(startOfMonth(month), { weekStartsOn: 1 })
         const monthEnd = endOfWeek(endOfMonth(month), { weekStartsOn: 1 })
@@ -158,29 +152,30 @@ export function HolidayCalendar({ holidays, year, countryFilter }: HolidayCalend
           <div
             key={month.toString()}
             data-month={format(month, "yyyy-MM")}
-            className="w-full"
+            className="w-full scroll-mt-[var(--filterbar-h)]"
           >
-            <h3 className="text-xl font-bold capitalize text-foreground py-4 px-4 sticky top-[180px] sm:top-[72px] z-30 bg-background/95 backdrop-blur-sm">
-              {format(month, "MMMM", { locale: dateFnsLocale })}
-            </h3>
-
-            <div className="grid grid-cols-7 text-sm sticky top-[240px] sm:top-[132px] z-30 bg-background/95 backdrop-blur-sm py-2 px-4 border-b-2 border-border/50">
-              {weekdaysShort.map((day) => (
-                <div
-                  key={day}
-                  className={cn(
-                    "font-medium py-1",
-                    ["Sht", "Die", "Sat", "Sun", "Sa", "So"].includes(day)
-                      ? "text-red-500 dark:text-red-400"
-                      : "text-muted-foreground"
-                  )}
-                >
-                  {day}
-                </div>
-              ))}
+            <div className="sticky top-[var(--filterbar-h)] z-30 bg-background border-b border-border/60">
+              <h3 className="text-lg sm:text-xl font-bold capitalize text-foreground pt-3 pb-1 px-4 sm:px-0">
+                {format(month, "MMMM", { locale: dateFnsLocale })}
+              </h3>
+              <div className="grid grid-cols-7 text-xs sm:text-sm py-2 px-4 sm:px-0">
+                {weekdaysShort.map((day, index) => (
+                  <div
+                    key={day}
+                    className={cn(
+                      "font-medium px-1.5 sm:px-2",
+                      index >= 5
+                        ? "text-red-500 dark:text-red-400"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {day}
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="grid grid-cols-7 mt-2 gap-px rounded-lg overflow-hidden border-border/50 mx-4 sm:mx-0">
+            <div className="grid grid-cols-7 mt-2 gap-px mx-4 sm:mx-0">
               {days.map((day) => {
                 const holiday = getHolidayForDate(day)
                 const isCurrentMonth = isSameMonth(day, month)
@@ -191,7 +186,7 @@ export function HolidayCalendar({ holidays, year, countryFilter }: HolidayCalend
                 const isFirstRow = isCurrentMonth && dayNumber <= 7
 
                 if (!isCurrentMonth) {
-                  return <div key={day.toString()} className="min-h-[80px]" />
+                  return <div key={day.toString()} className="min-h-[60px] sm:min-h-[80px]" />
                 }
 
                 const isActive = activeDate === dateStr
@@ -205,7 +200,7 @@ export function HolidayCalendar({ holidays, year, countryFilter }: HolidayCalend
                       setActiveDate(isActive ? null : dateStr)
                     }}
                     className={cn(
-                      "min-h-[80px] p-2 rounded-lg border border-transparent transition-all relative group cursor-pointer",
+                      "min-h-[60px] sm:min-h-[80px] p-1.5 sm:p-2 rounded-lg border border-transparent transition-all relative group cursor-pointer",
                       "hover:border-border hover:bg-muted/30",
                       isActive && "border-border bg-muted/30",
                       holiday ? "bg-orange-50 dark:bg-orange-950/20" : 
@@ -228,23 +223,10 @@ export function HolidayCalendar({ holidays, year, countryFilter }: HolidayCalend
                     {holiday && (
                       <div className="flex flex-col gap-1">
                         <div className="flex gap-1 items-center">
-                          {(() => {
-                            const displayCountry = holiday.country === 'BOTH' ? countryFilter : holiday.country;
-                            return (
-                              <>
-                                <div className="flex items-center sm:hidden">
-                                  <div className={cn(
-                                    "w-4 h-2 rounded-full shadow-sm",
-                                    displayCountry === 'AL' && "bg-red-500",
-                                    displayCountry === 'XK' && "bg-blue-500",
-                                    displayCountry === 'ME' && "bg-green-500",
-                                    displayCountry === 'MK' && "bg-purple-500"
-                                  )}></div>
-                                </div>
-                                <span className="hidden sm:inline text-base leading-none">{countryFlags[displayCountry]}</span>
-                              </>
-                            );
-                          })()}
+                          <div className="w-4 h-1.5 rounded-full bg-orange-500 sm:hidden" />
+                          <span className="hidden sm:inline text-base leading-none">
+                            {COUNTRY_FLAGS[holiday.country === 'BOTH' ? countryFilter : holiday.country]}
+                          </span>
                         </div>
                         <span className="text-[10px] leading-tight font-medium text-muted-foreground line-clamp-2 hidden sm:block">
                           {holiday.name}
