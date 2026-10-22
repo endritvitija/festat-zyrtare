@@ -6,7 +6,8 @@
     "holiday": "Feiertag",
     "weekend": "Wochenende",
     "recommendation": "Urlaubsempfehlung",
-    "recommendationTooltip": "Empfehlung, einen Urlaubstag zu nehmen"
+    "recommendationTooltip": "Empfehlung, einen Urlaubstag zu nehmen",
+    "backToTop": "Nach oben"
   },
   "countries": {
     "AL": "Albanien",

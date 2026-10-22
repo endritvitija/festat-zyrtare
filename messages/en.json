@@ -6,7 +6,8 @@
     "holiday": "Official holiday",
     "weekend": "Weekend",
     "recommendation": "Holiday recommendation",
-    "recommendationTooltip": "Recommendation to take a day off"
+    "recommendationTooltip": "Recommendation to take a day off",
+    "backToTop": "Back to top"
   },
   "countries": {
     "AL": "Albania",

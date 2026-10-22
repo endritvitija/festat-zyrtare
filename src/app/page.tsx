@@ -8,6 +8,7 @@ import { FilterBar } from "@/components/FilterBar";
 import { HolidayCalendar } from "@/components/HolidayCalendar";
 import { HolidayList } from "@/components/HolidayList";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getHolidayYear, getHolidaysForYear } from "@/data/holidays";
 import { SingleCountry } from "@/types";
@@ -179,6 +180,8 @@ function HomeContent() {
           </div>
         </div>
       </main>
+
+      <ScrollToTop />
 
       <footer className="border-t border-border mt-12 py-8 text-center text-sm text-muted-foreground px-4">
         <div className="flex flex-col items-center gap-4">
