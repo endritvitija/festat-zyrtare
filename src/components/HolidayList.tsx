@@ -71,7 +71,7 @@ function DayGroup({
           </span>
         )}
         <h3 className="text-sm font-medium capitalize text-foreground">
-          {format(date, "EEEE, MMM d", { locale: dateFnsLocale })}
+          {format(date, "EEEE, d MMMM", { locale: dateFnsLocale })}
         </h3>
       </div>
       <ul>
