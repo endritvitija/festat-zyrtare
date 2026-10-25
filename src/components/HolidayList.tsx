@@ -70,8 +70,8 @@ function DayGroup({
             {t("today")}
           </span>
         )}
-        <h3 className="text-sm font-medium text-foreground">
-          {format(date, "EEE, MMM d", { locale: dateFnsLocale })}
+        <h3 className="text-sm font-medium capitalize text-foreground">
+          {format(date, "EEEE, MMM d", { locale: dateFnsLocale })}
         </h3>
       </div>
       <ul>
