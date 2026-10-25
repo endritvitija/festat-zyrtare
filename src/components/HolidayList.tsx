@@ -78,10 +78,10 @@ function DayGroup({
         {holidays.map((holiday) => {
           const dayOff = isDayOff(holiday);
           return (
-            <li key={holiday.date + holiday.name} className="flex gap-3 py-2.5">
+            <li key={holiday.date + holiday.name} className="flex gap-3 py-2">
               <span
                 className={cn(
-                  "my-0.5 w-1 shrink-0 self-stretch rounded-full",
+                  "my-0.5 min-h-8 w-1 shrink-0 self-stretch rounded-full",
                   dayOff ? "bg-muted-foreground/35" : "bg-orange-500"
                 )}
               />
