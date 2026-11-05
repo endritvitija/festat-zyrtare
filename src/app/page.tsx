@@ -15,12 +15,57 @@ import { SingleCountry } from "@/types";
 import { GitBranch } from "lucide-react";
 
 const DEFAULT_COUNTRY: SingleCountry = "XK";
+const COUNTRY_STORAGE_KEY = "festat-country";
+const COUNTRY_SOURCE_KEY = "festat-country-source";
 
+const SUPPORTED_COUNTRIES: Record<string, SingleCountry> = {
+  AL: "AL",
+  XK: "XK",
+  // Some IP databases still use older Kosovo codes
+  KV: "XK",
+  KS: "XK",
+  ME: "ME",
+  MK: "MK",
+};
+
+// Kosovo has no IANA zone of its own; devices there report Europe/Belgrade.
 const TIMEZONE_TO_COUNTRY: Record<string, SingleCountry> = {
   "Europe/Tirane": "AL",
+  "Europe/Belgrade": "XK",
   "Europe/Podgorica": "ME",
   "Europe/Skopje": "MK",
 };
+
+function isSingleCountry(value: string | null | undefined): value is SingleCountry {
+  return value === "AL" || value === "XK" || value === "ME" || value === "MK";
+}
+
+function readStoredCountry(): SingleCountry | null {
+  try {
+    const value = localStorage.getItem(COUNTRY_STORAGE_KEY);
+    return isSingleCountry(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function readCountrySource(): "manual" | "auto" | null {
+  try {
+    const value = localStorage.getItem(COUNTRY_SOURCE_KEY);
+    return value === "manual" || value === "auto" ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+function storeCountry(country: SingleCountry, source: "manual" | "auto") {
+  try {
+    localStorage.setItem(COUNTRY_STORAGE_KEY, country);
+    localStorage.setItem(COUNTRY_SOURCE_KEY, source);
+  } catch {
+    // ignore quota / private mode
+  }
+}
 
 function detectCountryFromTimezone(): SingleCountry | null {
   try {
@@ -31,20 +76,21 @@ function detectCountryFromTimezone(): SingleCountry | null {
   }
 }
 
-async function detectCountryFromIP(): Promise<SingleCountry | null> {
+async function detectCountryFromIP(
+  signal?: AbortSignal
+): Promise<SingleCountry | null> {
   try {
-    const response = await fetch("https://ipapi.co/country_code/", {
-      signal: AbortSignal.timeout(3000),
+    // ipwho.is correctly returns XK for Kosovo; ipapi.co is often blocked/rate-limited.
+    const response = await fetch("https://ipwho.is/", {
+      signal: signal ?? AbortSignal.timeout(3000),
     });
     if (!response.ok) return null;
-    const code = (await response.text()).trim().toUpperCase();
-    const supported: Record<string, SingleCountry> = {
-      AL: "AL",
-      XK: "XK",
-      ME: "ME",
-      MK: "MK",
+    const data = (await response.json()) as {
+      success?: boolean;
+      country_code?: string;
     };
-    return supported[code] ?? null;
+    if (!data.success || !data.country_code) return null;
+    return SUPPORTED_COUNTRIES[data.country_code.toUpperCase()] ?? null;
   } catch {
     return null;
   }
@@ -61,34 +107,54 @@ function HomeContent() {
   const year = getHolidayYear();
   const holidays = React.useMemo(() => getHolidaysForYear(year), [year]);
 
-  const hasCountryParam = searchParams.has("country");
+  const urlCountry = searchParams.get("country");
 
   const [countryFilter, setCountryFilter] = React.useState<SingleCountry>(() => {
-    const country = searchParams.get("country");
-    if (
-      country === "AL" ||
-      country === "XK" ||
-      country === "ME" ||
-      country === "MK"
-    ) {
-      return country;
+    if (isSingleCountry(urlCountry)) return urlCountry;
+    if (typeof window !== "undefined") {
+      const stored = readStoredCountry();
+      if (stored) return stored;
     }
     return DEFAULT_COUNTRY;
   });
 
-  React.useEffect(() => {
-    if (hasCountryParam) return;
+  const handleCountryChange = React.useCallback((country: SingleCountry) => {
+    storeCountry(country, "manual");
+    setCountryFilter(country);
+  }, []);
 
+  React.useEffect(() => {
+    // Never override an explicit country the user picked in the dropdown.
+    if (readCountrySource() === "manual") return;
+
+    let cancelled = false;
+    const controller = new AbortController();
+
+    const applyDetected = (country: SingleCountry) => {
+      if (cancelled || readCountrySource() === "manual") return;
+      storeCountry(country, "auto");
+      setCountryFilter(country);
+    };
+
+    // Prefer timezone first (instant). Kosovo reports Europe/Belgrade.
     const tzCountry = detectCountryFromTimezone();
     if (tzCountry) {
-      setCountryFilter(tzCountry);
-      return;
+      applyDetected(tzCountry);
+      return () => {
+        cancelled = true;
+        controller.abort();
+      };
     }
 
-    detectCountryFromIP().then((ipCountry) => {
-      if (ipCountry) setCountryFilter(ipCountry);
+    detectCountryFromIP(controller.signal).then((ipCountry) => {
+      if (ipCountry) applyDetected(ipCountry);
     });
-  }, [hasCountryParam]);
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
+  }, []);
 
   const [view, setView] = React.useState<"CALENDAR" | "LIST">(() => {
     const v = searchParams.get("view");
@@ -155,7 +221,7 @@ function HomeContent() {
             countryFilter={countryFilter}
             view={view}
             holidays={holidays}
-            onCountryChange={setCountryFilter}
+            onCountryChange={handleCountryChange}
             onViewChange={setView}
           />
 
